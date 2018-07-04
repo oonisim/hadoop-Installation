@@ -1,0 +1,8 @@
+HADOOP_VERSION: 2.8.4
+HADOOP_PACKAGE: "hadoop-{{ HADOOP_VERSION }}.tar.gz"
+HADOOP_DOWNLOAD_URL: "http://apache.mirror.amaze.com.au/hadoop/common/hadoop-{{ HADOOP_VERSION }}/{{ HADOOP_PACKAGE }}"
+HADOOP_PACKAGE_CHECKSUM: "md5:B30B409BB69185003B3BABD1504BA224"
+HADOOP_DOWNLOAD_DIR: "~/{{ HADOOP_ADMIN }}/downloads"
+HADOOP_HOME: "/usr/local/hadoop"
+HADOOP_URL: "http://localhost:8080"
+HADOOP_DFS_REPLICATION: 2
