@@ -1,3 +1,2 @@
-#- import_playbook: master.yml
-#- import_playbook: worker.yml
-- import_playbook: list.yml
+- import_playbook: master.yml
+- import_playbook: worker.yml

@@ -8,6 +8,24 @@
     region:          "{{ aws_region }}"
   register: ec2_instance_list
 
+- name: "Get list of master instances in the {{ ENV_ID }} environment..."
+  ec2_instance_facts:
+    filters:
+      "tag:environment"   : "{{ ENV_ID }}"
+      "tag:type"          : "{{ NODE_TYPE_MASTER }}"
+      instance-state-name : running
+    region:          "{{ aws_region }}"
+  register: ec2_instance_masters
+
+- name: "Get list of master instances in the {{ ENV_ID }} environment..."
+  ec2_instance_facts:
+    filters:
+      "tag:environment"   : "{{ ENV_ID }}"
+      "tag:type"          : "{{ NODE_TYPE_WORKER }}"
+      instance-state-name : running
+    region:          "{{ aws_region }}"
+  register: ec2_instance_workers
+
 - name: "Get list of SGs in the {{ ENV_ID }} environment..."
   ec2_group_facts:
     filters:
@@ -27,19 +45,4 @@
     src:    hosts.j2
     dest:   "{{ HOSTFILE }}"
 
-#- name: create EC2 instance list...
-#  local_action:
-#    module: template
-#    src:    instances.j2
-#    dest:   "{{ HOSTFILE }}/instances.{{ ENV_ID }}"
-#
-#- local_action :
-#    module: copy
-#    content: "{{ ec2_instance_list | to_nice_yaml }}"
-#    dest:    "{{ role_path }}/results/ec2.{{ ENV_ID }}.instances.yml"
-#
-#- local_action :
-#    module: copy
-#    content: "{{ ec2_instance_list | to_nice_json }}"
-#    dest:    "{{ role_path }}/results/ec2.{{ ENV_ID }}.instances.json"
 

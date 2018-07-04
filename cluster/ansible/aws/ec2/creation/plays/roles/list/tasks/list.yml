@@ -11,7 +11,7 @@
     src:    "{{ item }}"
     dest:   "{{ SPARK_OUTPUT_DIR }}/{{ item | basename | regex_replace('\\.j2','') }}"
   with_fileglob:
-    - "{{ role_path}}/templates/spark/*.j2"
+    - "{{ role_path}}/templates/spark/*"
 
 - name: create hosts file for /etc/hosts ...
   local_action:
