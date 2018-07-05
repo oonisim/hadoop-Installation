@@ -1,13 +1,13 @@
 - name: "Overwrite {{ HADOOP_HOME }}/etc/"
   copy:
-    src   : "{{ role_path }}/files/{{ item }}"
+    src   : "{{ item }}"
     dest  : "{{ HADOOP_HOME }}/etc/{{ item }}"
     owner : "{{ HADOOP_ADMIN }}"
     group : "{{ HADOOP_GROUP }}"
     mode  : 0664
     backup: yes
   with_fileglob:
-    - {{ role_path }}/files/*
+    - {{ role_path }}/files/hadoop/*
 
 - name: "Format file system"
   become: true
