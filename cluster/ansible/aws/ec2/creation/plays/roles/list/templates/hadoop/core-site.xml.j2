@@ -19,7 +19,7 @@
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-{% for item in hostvars['AWS_HOLDER_MASTER']['ec2'].instances %}
+{% for item in hostvars['AWS_HOLDER_MASTER']['ec2']['instances'] %}
         <value>hdfs://{{ item.private_dns_name }}:9000</value>
 {% endfor %}
     </property>

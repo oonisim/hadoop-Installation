@@ -11,7 +11,7 @@ K8S AWS cloud provider requires specific tagging and they are handled here.
 ├── plays
 │   ├── list.yml
 │   ├── roles
-│   │   ├── site.list
+│   │   ├── list
 │   │   ├── site.start
 │   │   ├── site.stop
 │   │   └── site.tag
@@ -19,7 +19,7 @@ K8S AWS cloud provider requires specific tagging and they are handled here.
 │   ├── stop.yml
 │   └── tag.yml
 └── scripts
-    ├── generate_hosts_file.sh  <---- Create hosts file (to be /etc/hosts) from the EC2 instances tagged with **environment** set to ENV_ID.
+    ├── generate_config_files.sh  <---- Create hosts file (to be /etc/hosts) from the EC2 instances tagged with **environment** set to ENV_ID.
     ├── create_volume.py        <---- Boto3 script to create EBS volumes.
     ├── delete_volume.py        <---- Boto3 script to delete EBS volumes.
     ├── detach_attach.py        <---- Boto3 script to detach/attach EBS volumes.

@@ -1,7 +1,7 @@
 - name: "Create IAM Managed Policy for K8S AWS cloud provider"
   iam_managed_policy:
     policy_name: "{{ CLOUD_PROVIDER_POLICY_NAME }}"
-    policy: "{{ lookup('file', 'k8s_cloud_provider_policy.json') }}"
+    policy: "{{ lookup('file', 'cluster_cloud_provider_policy.json') }}"
     policy_description: "Policy for K8S AWS cloud provider"
     state: present
   register: policy

@@ -15,8 +15,6 @@
 <configuration>
   <property>
     <name>yarn.resourcemanager.hostname</name>
-{% for item in hostvars['AWS_HOLDER_MASTER']['ec2']['instances'] %}
-     <value>{{ item.private_dns_name }}</value>
-{% endfor %}
+     <value>ip-10-0-0-83.us-west-1.compute.internal</value>
   </property>
 </configuration>

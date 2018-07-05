@@ -1,6 +1,6 @@
 - name: "Overwrite {{ SPARK_HOME }}/conf/slaves"
   copy:
-    src   : "{{ role_path }}/files/workers"
+    src   : "{{ role_path }}/files/spark/workers"
     dest  : "{{ SPARK_HOME }}/conf/slaves"
     owner : "{{ SPARK_ADMIN }}"
     group : "{{ SPARK_GROUP }}"

@@ -6,7 +6,6 @@ cd ${DIR}
 
 export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:?"Set AWS_ACCESS_KEY_ID"}
 export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:?"Set AWS_SECRET_ACCESS_KEY"}
-export EC2_KEYPAIR_NAME=${EC2_KEYPAIR_NAME:?"Set EC2_KEYPAIR_NAME"}
 export TARGET_INVENTORY=${TARGET_INVENTORY:?"Set TARGET_INVENTORY"}
 
 
@@ -16,9 +15,8 @@ export TARGET_INVENTORY=${TARGET_INVENTORY:?"Set TARGET_INVENTORY"}
 #--------------------------------------------------------------------------------
 ./maintenance.sh
 
-cluster/ansible/aws/ec2/creation/scripts/main.sh ${TARGET_INVENTORY} ${EC2_KEYPAIR_NAME} ${DIR}/os ${DIR}/hadoop ${DIR}/spark
+rm -rf os     && mkdir -p ${DIR}/os
+rm -rf hadoop && mkdir -p ${DIR}/hadoop 
+rm -rf spark  && mkdir -p ${DIR}/spark
 
-mkdir -p ${DIR}/os
-mkdir -p ${DIR}/hadoop 
-mkdir -p ${DIR}/spark
-cluster/ansible/aws/ec2/operations/scripts/generate_config_files.sh
+cluster/ansible/aws/ec2/operations/scripts/generate_config_files.sh ${TARGET_INVENTORY} ${DIR}/os ${DIR}/hadoop ${DIR}/spark

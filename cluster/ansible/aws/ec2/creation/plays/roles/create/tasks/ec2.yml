@@ -2,7 +2,7 @@
 # Retrieve VPC/subnet information from the dummy host variables.
 #--------------------------------------------------------------------------------
 - set_fact:
-    k8s_public_subnet: "{{ hostvars['AWS_HOLDER_VPC']['subnet'] }}"
+    cluster_public_subnet: "{{ hostvars['AWS_HOLDER_VPC']['subnet'] }}"
 
 #--------------------------------------------------------------------------------
 # Set EC2 parameters and create instances.
@@ -29,7 +29,7 @@
     zone:                   "{{ aws_zone }}"
     image:                  "{{ ec2_ami_id }}"
     group:                  "{{ ec2_security_group }}"
-    vpc_subnet_id:          "{{ k8s_public_subnet.subnet.id }}"
+    vpc_subnet_id:          "{{ cluster_public_subnet.subnet.id }}"
     instance_profile_name:  "{{ CLOUD_PROVIDER_ROLE_NAME }}"
     instance_type:          "{{ ec2_instance_type }}"
     assign_public_ip:       "yes"

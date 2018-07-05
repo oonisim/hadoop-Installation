@@ -7,7 +7,3 @@ find . -name '*.sh' | xargs -I % /bin/bash -c "git add %; "
 find . -name '*.sh' | xargs -I % /bin/bash -c "chmod u+x %; "
 find . -name '*.sh' | xargs -I % /bin/bash -c "git update-index --chmod=+x % "
 find . -type f \( -name 'site.retry' -o -name 'ansible.log' \) | xargs rm
-
-rm -rf os
-rm -rf hadoop
-rm -rf spark

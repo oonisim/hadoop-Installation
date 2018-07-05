@@ -7,4 +7,4 @@
     mode  : 0664
     backup: yes
   with_fileglob:
-    - {{ role_path }}/files/*
+    "- {{ role_path }}/files/hadoop/*"

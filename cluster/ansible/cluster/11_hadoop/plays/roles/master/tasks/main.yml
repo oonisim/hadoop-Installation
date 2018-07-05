@@ -9,9 +9,9 @@
   with_fileglob:
     - {{ role_path }}/files/*
 
-- name: "Start cluster"
+- name: "Format file system"
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: |
-    export JAVA_HOME="$(jrunscript -e 'java.lang.System.out.println(java.lang.System.getProperty("java.home"));')"
-    {{HADOOP_HOME}}/sbin/start-dfs.sh
+    {{ HADOOP_HOME }}/sbin/stop-dfs.sh
+    {{ HADOOP_HOME }}/bin/dfs namenode -format

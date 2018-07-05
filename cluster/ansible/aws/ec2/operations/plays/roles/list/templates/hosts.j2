@@ -1,9 +1,12 @@
 #jinja2: lstrip_blocks: "True", trim_blocks: "True"
 #--------------------------------------------------------------------------------
-# /etc/hosts
+# /etc/hosts created by Ansible
 #--------------------------------------------------------------------------------
-{% for item in ec2_instance_list.instances %}
-{{ item.private_ip_address }}  {{ item.private_dns_name }}  {{ item.tags.Name }}
+{% for item in ec2_instance_masters.instances %}
+{{ item.private_ip_address }}  {{ item.private_dns_name }}
+{% endfor %}
+{% for item in ec2_instance_workers.instances %}
+{{ item.private_ip_address }}  {{ item.private_dns_name }}
 {% endfor %}
 
 127.0.0.1	localhost

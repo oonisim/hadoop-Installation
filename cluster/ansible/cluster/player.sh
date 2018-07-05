@@ -28,7 +28,7 @@ set args        [lrange $argv 2 end];
 # Run playbook
 #--------------------------------------------------------------------------------
 #spawn ansible-playbook -vvvv -i hosts --limit "environment" --user $remote_user --ask-vault-pass {*}$args site.yml --check
-spawn ansible-playbook -vvvv -i hosts --limit "environment" --user $remote_user --ask-vault-pass {*}$args site.yml --check
+spawn ansible-playbook -vvvv -i hosts --limit "environment" --user $remote_user --ask-vault-pass {*}$args site.yml
 
 expect "Vault password:"
 send "$password\n"

@@ -5,5 +5,5 @@
 #--------------------------------------------------------------------------------
 {% for item in ec2_instance_masters.instances %}
 MASTER_HOSTNAME={{ item.private_dns_name }}
-MASTER_NODE_IP={{ item.private_ip }}
+MASTER_NODE_IP={{ item.private_ip_address }}
 {% endfor %}

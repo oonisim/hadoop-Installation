@@ -28,41 +28,18 @@ export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:?"Set AWS_ACCESS_KEY_ID"}
 export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:?"Set AWS_SECRET_ACCESS_KEY"}
 
 #--------------------------------------------------------------------------------
-# Master node information
-#--------------------------------------------------------------------------------
-if [ -f ./master ] ; then
-    source master
-fi
-
-if [ -z ${MASTER_HOSTNAME+x} ]; then
-    echo "What is MASTER_HOSTNAME?"
-    read MASTER_HOSTNAME
-else
-    echo "MASTER_HOSTNAME is ${MASTER_HOSTNAME}"
-fi
-
-if [ -z ${MASTER_NODE_IP+x} ]; then
-    echo "What is MASTER_NODE_IP?"
-    read MASTER_NODE_IP
-else
-    echo "MASTER_NODE_IP is ${MASTER_NODE_IP}"
-fi
-
-#--------------------------------------------------------------------------------
 # Generate hosts file (/etc/hosts) from the EC2 instances created.
 #--------------------------------------------------------------------------------
-#HOSTFILE="${DIR}/cluster/ansible/cluster/02_os/plays/roles/hosts/files/hosts"
-#./cluster/ansible/aws/ec2/operations/scripts/generate_hosts_file.sh ${TARGET_INVENTORY} ${HOSTFILE}
 cp hosts    ${DIR}/cluster/ansible/cluster/02_os/plays/roles/hosts/files/hosts
-cp hadoop/* ${DIR}/cluster/ansible/cluster/11_hadoop/plays/roles/master/files/
-cp hadoop/* ${DIR}/cluster/ansible/cluster/11_hadoop/plays/roles/worker/files/
-cp spark/*  ${DIR}/cluster/ansible/cluster/21_hadoop/plays/roles/master/files/
+cp -r hadoop ${DIR}/cluster/ansible/cluster/11_hadoop/plays/roles/master/files/
+cp -r hadoop ${DIR}/cluster/ansible/cluster/11_hadoop/plays/roles/worker/files/
+cp -r spark  ${DIR}/cluster/ansible/cluster/21_spark/plays/roles/master/files/
 
 #--------------------------------------------------------------------------------
 # Run Spark setup
 #--------------------------------------------------------------------------------
 ./maintenance.sh
-for module in $(find ./cluster/ansible/spark -type d -maxdepth 1 -mindepth 1)
+for module in $(find ./cluster/ansible/cluster -type d -maxdepth 1 -mindepth 1)
 do
     if [ "${module##*/}" == "51_datadog" ] ; then
         continue
@@ -70,9 +47,7 @@ do
 
     ${module}/scripts/main.sh \
         ${TARGET_INVENTORY} \
-        ${REMOTE_USER} \
-        -e MASTER_HOSTNAME=${MASTER_HOSTNAME} \
-        -e MASTER_NODE_IP=${MASTER_NODE_IP}
+        ${REMOTE_USER} 
 
     if [ "${module##*/}" == "02_os" ] ; then
         echo "waiting sever restarts"

@@ -4,7 +4,6 @@
 # Ansible generated file for Spark. 
 # {{ role_path }}/templates/workers.j2
 #--------------------------------------------------------------------------------
-{% for item in hostvars['AWS_HOLDER_WORKER']['ec2']['instances'] %}
-# MASTER_NODE_IP={{ item.private_ip }}
+{% for item in ec2_instance_workers.instances %}
 {{ item.private_dns_name }}
 {% endfor %}
