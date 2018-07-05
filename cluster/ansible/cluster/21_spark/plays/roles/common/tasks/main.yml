@@ -8,7 +8,7 @@
   become_user: "{{ SPARK_ADMIN }}"
   ignore_errors: true
 
-- name: "Stop cluster"
+- name: "Wait cluster to stop"
   shell: |
     pgrep -a java | grep 'spark/conf'
   register: _result
