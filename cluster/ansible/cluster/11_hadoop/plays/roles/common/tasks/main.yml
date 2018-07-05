@@ -15,6 +15,18 @@
     chdir: "{{ HADOOP_DOWNLOAD_DIR }}"
   ignore_errors: true
 
+- name: Delete HADOOP envirinment variables
+  file:
+    path: /etc/profile.d/hadoop.sh
+    state: absent
+  ignore_errors: true
+
+- name: "Delete {{ HADOOP_HOME }}"
+  file:
+    path: "{{ HADOOP_HOME }}"
+    state: absent
+  ignore_errors: true
+    
 #--------------------------------------------------------------------------------
 # Install Packages
 #--------------------------------------------------------------------------------

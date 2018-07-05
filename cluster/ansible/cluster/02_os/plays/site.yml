@@ -4,10 +4,10 @@
   any_errors_fatal: true
   become: yes
   roles:
+    - ulimits
+    - hosts
     - packages
     - selinux
     - firewalld
-    - hosts
     - ntp
     - user.admin
-

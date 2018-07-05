@@ -3,9 +3,9 @@
 # /etc/hosts created by Ansible
 #--------------------------------------------------------------------------------
 {% for item in ec2_instance_masters.instances %}
-{{ item.private_ip_address }}  {{ item.private_dns_name }}
+{{ item.private_ip_address }}  {{ item.private_dns_name }} {{ item.tags.Name }}
 {% endfor %}
-{% for item in ec2_instance_workers.instances %}
+{% for item in ec2_instance_workers.instances %} {{ item.tags.Name }}
 {{ item.private_ip_address }}  {{ item.private_dns_name }}
 {% endfor %}
 

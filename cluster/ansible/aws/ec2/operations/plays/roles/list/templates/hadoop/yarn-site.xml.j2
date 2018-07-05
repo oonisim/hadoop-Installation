@@ -19,4 +19,12 @@
      <value>{{ item.private_dns_name }}</value>
 {% endfor %}
   </property>
+  <property>
+     <name>yarn.nodemanager.aux-services</name>
+     <value>mapreduce.shuffle</value>
+  </property>
+  <property>
+     <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+     <value>org.apache.hadoop.mapredShulfflehandler</value>
+  </property>
 </configuration>

@@ -16,9 +16,4 @@ export TARGET_INVENTORY=${TARGET_INVENTORY:?"Set TARGET_INVENTORY"}
 #--------------------------------------------------------------------------------
 ./maintenance.sh
 
-cluster/ansible/aws/ec2/creation/scripts/main.sh ${TARGET_INVENTORY} ${EC2_KEYPAIR_NAME} ${DIR}/os ${DIR}/hadoop ${DIR}/spark
-
-mkdir -p ${DIR}/os
-mkdir -p ${DIR}/hadoop 
-mkdir -p ${DIR}/spark
-cluster/ansible/aws/ec2/operations/scripts/generate_config_files.sh
+cluster/ansible/aws/ec2/creation/scripts/main.sh ${TARGET_INVENTORY} ${EC2_KEYPAIR_NAME}

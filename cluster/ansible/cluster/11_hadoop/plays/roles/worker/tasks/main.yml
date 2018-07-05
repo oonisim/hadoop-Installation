@@ -1,10 +1,10 @@
-- name: "Overwrite {{ HADOOP_HOME }}/etc/"
+- name: "Overwrite {{ HADOOP_CONF_HOME }}"
   copy:
     src   : "{{ item }}"
-    dest  : "{{ HADOOP_HOME }}/etc/{{ item }}"
+    dest  : "{{ HADOOP_CONF_HOME }}/{{ item | basename }}"
     owner : "{{ HADOOP_ADMIN }}"
     group : "{{ HADOOP_GROUP }}"
     mode  : 0664
     backup: yes
   with_fileglob:
-    "- {{ role_path }}/files/hadoop/*"
+    - "{{ role_path }}/files/hadoop/*"

@@ -30,7 +30,7 @@ export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:?"Set AWS_SECRET_ACCESS_KEY
 #--------------------------------------------------------------------------------
 # Generate hosts file (/etc/hosts) from the EC2 instances created.
 #--------------------------------------------------------------------------------
-cp hosts    ${DIR}/cluster/ansible/cluster/02_os/plays/roles/hosts/files/hosts
+cp os/hosts  ${DIR}/cluster/ansible/cluster/02_os/plays/roles/hosts/files/hosts
 cp -r hadoop ${DIR}/cluster/ansible/cluster/11_hadoop/plays/roles/master/files/
 cp -r hadoop ${DIR}/cluster/ansible/cluster/11_hadoop/plays/roles/worker/files/
 cp -r spark  ${DIR}/cluster/ansible/cluster/21_spark/plays/roles/master/files/

@@ -39,6 +39,6 @@ $(_locate ${DIR} '/' 'conductor.sh') \
   ${PLAYBOOK_DIR} \
   ${TARGET} \
   ${REMOTE_USER} \
-  ${ARGS} --check
+  ${ARGS}
 
 . ${DIR}/_posttask.sh

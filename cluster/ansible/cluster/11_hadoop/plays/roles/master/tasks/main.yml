@@ -1,17 +1,74 @@
-- name: "Overwrite {{ HADOOP_HOME }}/etc/"
+- name: "Overwrite {{ HADOOP_CONF_HOME }}"
   copy:
     src   : "{{ item }}"
-    dest  : "{{ HADOOP_HOME }}/etc/{{ item }}"
+    dest  : "{{ HADOOP_CONF_HOME }}/{{ item | basename }}"
     owner : "{{ HADOOP_ADMIN }}"
     group : "{{ HADOOP_GROUP }}"
     mode  : 0664
     backup: yes
   with_fileglob:
-    - {{ role_path }}/files/hadoop/*
+    - "{{ role_path }}/files/hadoop/*"
 
-- name: "Format file system"
+#--------------------------------------------------------------------------------
+# Setup SSH connections to workers.
+# HDFS commands are via SSH, hence need to create known_hosts.
+#--------------------------------------------------------------------------------
+# TBD
+
+#--------------------------------------------------------------------------------
+# sudo strips environment variables, hence need to get JAVA_HOME in the env, and
+# provide it as the Ansible environment variable.
+#--------------------------------------------------------------------------------
+- name: "Find JAVA_HOME"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    jrunscript -e 'java.lang.System.out.println(java.lang.System.getProperty("java.home"));'
+  register: java_home
+  
+- name: "Stop HDFS"
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: |
     {{ HADOOP_HOME }}/sbin/stop-dfs.sh
-    {{ HADOOP_HOME }}/bin/dfs namenode -format
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+  ignore_errors: true
+
+- name: "Wait cluster to stop"
+  shell: |
+    pgrep -a java | grep 'file=hadoop-policy.xml'
+  register: _result
+  until: _result.rc != 0
+  retries: 5
+  delay: 10
+  ignore_errors: true
+
+#--------------------------------------------------------------------------------
+# -force is required as it wait for stdin input, and returns 257.
+#--------------------------------------------------------------------------------
+- name: "Format file system"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ HADOOP_HOME }}/bin/hdfs namenode -format -force
+  run_once: yes
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+
+- name: "Start HDFS"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ HADOOP_HOME }}/sbin/start-dfs.sh
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+
+- name: "Verify HDFS"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ HADOOP_HOME }}/bin/hdfs dfsadmin -report
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+

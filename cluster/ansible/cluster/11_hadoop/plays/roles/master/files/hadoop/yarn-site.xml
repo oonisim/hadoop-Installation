@@ -15,6 +15,14 @@
 <configuration>
   <property>
     <name>yarn.resourcemanager.hostname</name>
-     <value>ip-10-0-0-83.us-west-1.compute.internal</value>
+     <value>ip-10-0-0-220.us-west-1.compute.internal</value>
+  </property>
+  <property>
+     <name>yarn.nodemanager.aux-services</name>
+     <value>mapreduce.shuffle</value>
+  </property>
+  <property>
+     <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+     <value>org.apache.hadoop.mapredShulfflehandler</value>
   </property>
 </configuration>
