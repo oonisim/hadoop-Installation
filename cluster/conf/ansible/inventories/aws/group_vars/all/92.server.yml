@@ -1,10 +1,39 @@
-SYS_USER: maonishi
-PKG_USER: maonishi
 
+SYS_USER: "oonisim"
+SYS_GROUP: "wheel"
+PKG_USER: "oonisim"
 
-#SPARK_GROUP:
-SPARK_ADMIN : maonishi
-SPARK_GROUP: k8s
+LINUX_USERS:
+  - name: "{{ HADOOP_ADMIN }}"
+    group: "{{ HADOOP_GROUP }}"
+    groups: "{{ sudoer_group }}"
+    ssh_private_key: "~/.ssh/id_rsa"
+    ssh_authorized_keys:
+      - "~/.ssh/id_rsa.pub"
+    password: "$6$lvOMGppNKTpUOL1u$kf5zKyxl7glYWif4QD3Q0IIoVeG5fy/feZQ5JE.haeHLE4qaNEq8J4Rl6Tg0xJ4L4sxOMA6kmvro34ou2RkPD0"
+  - name: "{{ SPARK_ADMIN }}"
+    group: "{{ SPARK_GROUP }}"
+    groups: "{{ sudoer_group }},{{ HADOOP_GROUP }}"
+    ssh_private_key: "~/.ssh/id_rsa"
+    ssh_authorized_keys:
+      - "~/.ssh/id_rsa.pub"
+    password: "$6$lvOMGppNKTpUOL1u$kf5zKyxl7glYWif4QD3Q0IIoVeG5fy/feZQ5JE.haeHLE4qaNEq8J4Rl6Tg0xJ4L4sxOMA6kmvro34ou2RkPD0"
+#  - name: "{{ SYS_USER }}"
+#    group: "{{ SPARK_GROUP }}"
+#    groups: "{{ DOCKER_GROUP }},{{ sudoer_group }}"
+#    authorized:
+#      - "~/.ssh/id_rsa.pub"
+#    password: "$6$lvOMGppNKTpUOL1u$kf5zKyxl7glYWif4QD3Q0IIoVeG5fy/feZQ5JE.haeHLE4qaNEq8J4Rl6Tg0xJ4L4sxOMA6kmvro34ou2RkPD0"
+#    private_key:
+#      - "{{ DECRYPT_KEY_FILE }}"
+#
+#  - name: "{{ PKG_USER }}"
+#    group: "{{ SPARK_GROUP }}"
+#    groups: "{{ sudoer_group }}"
+#    authorized:
+#      - "/home/{{ PKG_USER }}/.ssh/id_rsa.pub"
+#    password:
+
 
 #--------------------------------------------------------------------------------
 # Constants
@@ -75,15 +104,16 @@ K8S_PACKAGES_PREREQUISITES_REMOVE: "{{ K8S_PACKAGES_PREREQUISITES }}"
 K8S_VERSION_186: 1.8.6-0
 K8S_VERSION_190: 1.9.0-0
 K8S_VERSION_191: 1.9.1-0
-K8S_VERSION: "{{ K8S_VERSION_190 }}"
+K8S_VERSION_191: 1.9.6-0
+K8S_VERSION: "{{ K8S_VERSION_196 }}"
 
 K8S_PACKAGES:
-#  - kubeadm
-#  - kubelet
-#  - kubectl
-  - "kubeadm-{{ K8S_VERSION }}.x86_64"
-  - "kubectl-{{ K8S_VERSION }}.x86_64"
-  - "kubelet-{{ K8S_VERSION }}.x86_64"
+  - kubeadm
+  - kubelet
+  - kubectl
+#  - "kubeadm-{{ K8S_VERSION }}.x86_64"
+#  - "kubectl-{{ K8S_VERSION }}.x86_64"
+#  - "kubelet-{{ K8S_VERSION }}.x86_64"
   - flannel
   - docker
 

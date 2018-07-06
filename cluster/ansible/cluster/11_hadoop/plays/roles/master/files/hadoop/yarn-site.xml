@@ -13,16 +13,24 @@
   limitations under the License. See accompanying LICENSE file.
 -->
 <configuration>
-  <property>
-    <name>yarn.resourcemanager.hostname</name>
-     <value>ip-10-0-0-220.us-west-1.compute.internal</value>
-  </property>
-  <property>
-     <name>yarn.nodemanager.aux-services</name>
-     <value>mapreduce.shuffle</value>
-  </property>
-  <property>
-     <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
-     <value>org.apache.hadoop.mapredShulfflehandler</value>
-  </property>
+    <property>
+        <name>yarn.resourcemanager.hostname</name>
+        <value>ip-10-0-0-10.us-west-1.compute.internal</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
+        <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.resource.memory-mb</name>
+        <value>2048</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.resource.cpu-vcores</name>
+        <value>2</value>
+    </property>
 </configuration>
