@@ -8,55 +8,49 @@
   become_user: "{{ HADOOP_ADMIN }}"
   ignore_errors: true
 
-- name: "Remove {{ HADOOP_PACKAGE }}"
-  shell: |
-    rm {{ HADOOP_PACKAGE }}
-  args:
-    chdir: "{{ HADOOP_DOWNLOAD_DIR }}"
+- name: "Delete hadoop directories"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ HADOOP_DOWNLOAD_DIR }}"
+    - "{{ HADOOP_HOME }} "
+    - "{{ HADOOP_CORE_TMP_DIR }}"
+    - "{{ HADOOP_DFS_DATA_DIR }}"
   ignore_errors: true
 
-- name: Delete HADOOP envirinment variables
+- name: Delete HADOOP environment variable setups
   file:
     path: /etc/profile.d/hadoop.sh
     state: absent
   ignore_errors: true
-
-- name: "Delete {{ HADOOP_HOME }}"
-  file:
-    path: "{{ HADOOP_HOME }}"
-    state: absent
-  ignore_errors: true
     
 #--------------------------------------------------------------------------------
-# Install Packages
+# Download package and install
 #--------------------------------------------------------------------------------
-- include_vars: "{{ ansible_distribution }}_{{ ansible_distribution_major_version}}.yml"
-- include: "{{ ansible_distribution }}_{{ ansible_distribution_major_version}}.yml"
-
-- name: "Create/recreate {{ HADOOP_DOWNLOAD_DIR }}"
+- name: "Create hadoop directories"
   file:
-    path:   "{{ HADOOP_DOWNLOAD_DIR }}"
-    state:  "directory"
+    path:   "{{ item }}"
+    state:  directory
     owner:  "{{ HADOOP_ADMIN }}"
     group:  "{{ HADOOP_GROUP }}"
     mode:   0770
-
-- name: "Set owner/group as {{ HADOOP_ADMIN }}:{{ HADOOP_GROUP }} recursively {{ HADOOP_HOME }}"
-  file:
-    path:   "{{ HADOOP_HOME }}"
-    state:  "directory"
-    owner:  "{{ HADOOP_ADMIN }}"
-    group:  "{{ HADOOP_GROUP }}"
     recurse: true
+  with_items:
+    - "{{ HADOOP_DOWNLOAD_DIR }}"
+    - "{{ HADOOP_HOME }}"
+    - "{{ HADOOP_CORE_TMP_DIR }}"
+    - "{{ HADOOP_DFS_DATA_DIR }}"
+
 
 - name: "Download {{ HADOOP_DOWNLOAD_URL }}"
   get_url:
-    url:   "{{ HADOOP_DOWNLOAD_URL }}"
-    dest:  "{{ HADOOP_DOWNLOAD_DIR }}/{{ HADOOP_PACKAGE }}"
-    owner: "{{ HADOOP_ADMIN }}"
-    group: "{{ HADOOP_GROUP }}"
-    mode:  0770
+    url:      "{{ HADOOP_DOWNLOAD_URL }}"
     checksum: "{{ HADOOP_PACKAGE_CHECKSUM }}"
+    dest:     "{{ HADOOP_DOWNLOAD_DIR }}/{{ HADOOP_PACKAGE }}"
+    owner:    "{{ HADOOP_ADMIN }}"
+    group:    "{{ HADOOP_GROUP }}"
+    mode:     0770
 
 - name: "Install {{ HADOOP_PACKAGE }}"
   shell: |
@@ -64,8 +58,7 @@
   args:
     chdir: "{{ HADOOP_DOWNLOAD_DIR }}"
 
-# Environment setup.
-- name: Set HADOOP envirinment variables
+- name: Place /etc/profile.d/hadoop.sh
   template:
     src: hadoop.sh.j2
     dest: /etc/profile.d/hadoop.sh

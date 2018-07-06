@@ -2,30 +2,45 @@ HADOOP_VERSION: 2.8.4
 HADOOP_PACKAGE: "hadoop-{{ HADOOP_VERSION }}.tar.gz"
 HADOOP_DOWNLOAD_URL: "http://apache.mirror.amaze.com.au/hadoop/common/hadoop-{{ HADOOP_VERSION }}/{{ HADOOP_PACKAGE }}"
 HADOOP_PACKAGE_CHECKSUM: "md5:B30B409BB69185003B3BABD1504BA224"
-HADOOP_DOWNLOAD_DIR: "~/{{ HADOOP_ADMIN }}/downloads"
+HADOOP_DOWNLOAD_DIR: "~{{ HADOOP_ADMIN }}/downloads"
 
+#--------------------------------------------------------------------------------
+# Administration account
+#--------------------------------------------------------------------------------
 HADOOP_ADMIN : hadoop
 HADOOP_GROUP: hadoop
 
+#--------------------------------------------------------------------------------
+# Home
+#--------------------------------------------------------------------------------
 HADOOP_HOME: "/usr/local/hadoop"
 HADOOP_CONF_HOME: "{{ HADOOP_HOME }}/etc/hadoop"
 
-HADOOP_URL: "http://localhost:8080"
+#--------------------------------------------------------------------------------
+# Core
+# https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/core-default.xml
+#--------------------------------------------------------------------------------
+# hadoop.tmp.dir
+HADOOP_CORE_TMP_DIR: "/tmp/hadoop-{{ HADOOP_ADMIN }}"
 
 #--------------------------------------------------------------------------------
-# HDFS parameters
+# HDFS configurations
+# https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml
 #--------------------------------------------------------------------------------
 HADOOP_DFS_REPLICATION: 2
 HADOOP_DFS_BLOCK_SIZE: 134217728
 
-# hadoop.tmp.dir (https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/core-default.xml)
-HADOOP_TMP_DIR: "/tmp/hadoop-{{ HADOOP_ADMIN }}"
-
-# dfs.datanode.data.dir (https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml)
-HADOOP_DFS_DATA_DIR: "{{ HADOOP_TMP_DIR }}/dfs/data"
+# dfs.datanode.data.dir
+HADOOP_DFS_DATA_DIR: "/home/{{ HADOOP_ADMIN }}/dfs/data"
 
 #--------------------------------------------------------------------------------
-# YARN parameters
+# YARN configurations
 #--------------------------------------------------------------------------------
-YARN_RESOURCE_MEMORY_MB: 2048
-YARN_CPU_VCORES: 2
+# yarn.nodemanager.resource.cpu-vcores
+YARN_NM_CPU_VCORES: 2
+# yarn.nodemanager.resource.memory-mb
+YARN_NM_MEMORY_MB: 2048
+# yarn.nodemanager.aux-services
+YARN_NM_AUX_SERVICES: mapreduce_shuffle
+# yarn.nodemanager.aux-services.mapreduce_shuffle.class
+YARN_NM_AUX_SERVICES_SHUFFLE_CLASS: org.apache.hadoop.mapred.ShuffleHandler
