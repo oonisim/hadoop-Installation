@@ -22,7 +22,6 @@
     resource:             "{{ item.instance_id }}"
     tags:
       environment:        "{{ ENV_ID }}"
-      KubernetesCluster:  "{{ K8S_CLUSTER_NAME }}"
   with_items:     "{{ ec2.instances }}"
 
 - name: "Get list of SGs in the {{ ENV_ID }} environment..."
@@ -38,5 +37,4 @@
     resource:             "{{ item.group_id }}"
     tags:
       environment:        "{{ ENV_ID }}"
-      KubernetesCluster:  "{{ K8S_CLUSTER_NAME }}"
   with_items:             "{{ sg.security_groups }}"

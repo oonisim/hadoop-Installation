@@ -34,7 +34,6 @@
       Name:               "{{ ENV_ID }}_subnet"
       type:               "subnet"
       environment:        "{{ ENV_ID }}"
-      KubernetesCluster:  "{{ K8S_CLUSTER_NAME }}"
   register: cluster_public_subnet
 
 # Every VPC needs at least one Internet Gateway.
@@ -49,7 +48,6 @@
       Name:               "{{ ENV_ID }}_gateway"
       type:               "gateway"
       environment:        "{{ ENV_ID }}"
-      KubernetesCluster:  "{{ K8S_CLUSTER_NAME }}"
   register: vpc_gw
 
 
@@ -75,7 +73,6 @@
       Name:               "{{ ENV_ID }}_route_table"
       type:               "route_table"
       environment:        "{{ ENV_ID }}"
-      KubernetesCluster:  "{{ K8S_CLUSTER_NAME }}"
   register: vpc_route_table
 
 - name: "Preserve VPC information to dummy host"
@@ -112,7 +109,6 @@
       Name:               "{{ ec2_security_group }}"
       type:               "security_group"
       environment:        "{{ ENV_ID }}"
-      KubernetesCluster:  "{{ K8S_CLUSTER_NAME }}"
   register: cluster_sg
 
 - name: "Allow security group internal communications"

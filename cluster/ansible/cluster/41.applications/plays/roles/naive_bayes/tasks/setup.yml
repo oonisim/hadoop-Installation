@@ -1,0 +1,20 @@
+- name: "Clean {{ _APP_DIR }}"
+  file:
+    path:   "{{ _APP_DIR }}"
+    state:  absent
+
+- name: "Create {{ _APP_DIR }}"
+  file:
+    path:   "{{ _APP_DIR }}"
+    state:  directory
+    owner:  "{{ HADOOP_ADMIN }}"
+    group:  "{{ HADOOP_GROUP }}"
+    mode:   0770
+    recurse: true
+
+- name: "Find JAVA_HOME"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    jrunscript -e 'java.lang.System.out.println(java.lang.System.getProperty("java.home"));'
+  register: java_home

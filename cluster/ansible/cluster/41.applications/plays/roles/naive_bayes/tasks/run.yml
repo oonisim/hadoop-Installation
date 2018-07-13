@@ -1,0 +1,14 @@
+- name: "Run app"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+      {{ SPARK_HOME }}/bin/spark-submit \
+      --class bayes1 \
+      --master spark://aws_master00:7077 \ 
+      --executor-memory 700M \
+      --total-executor-cores 100 \ 
+      {{ _APP_BUILD_DIR }}/target/scala-2.11/naive-bayes_2.11-1.0.jar
+  environment:
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
+    

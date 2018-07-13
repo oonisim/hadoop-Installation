@@ -1,0 +1,27 @@
+- name: "mkdir {{ _APP_BUILD_DIR }}"
+  file:
+    path:   "{{ _APP_BUILD_DIR }}"
+    state:  directory
+    owner:  "{{ HADOOP_ADMIN }}"
+    group:  "{{ HADOOP_GROUP }}"
+    mode:   0770
+    recurse: true
+
+- name: "Copy package"
+  copy: 
+    src: "src.zip"
+    dest: "{{ _APP_BUILD_DIR }}"
+    owner:  "{{ HADOOP_ADMIN }}"
+    group:  "{{ HADOOP_GROUP }}"
+    mode:   0660
+
+- name: "Build scala/spark executable"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    unzip src.zip
+    sbt clean
+    sbt compile
+    sbt package
+  args:
+    chdir: "{{ _APP_BUILD_DIR }}"

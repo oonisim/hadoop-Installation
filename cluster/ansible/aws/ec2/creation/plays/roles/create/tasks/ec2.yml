@@ -127,7 +127,6 @@
       Name:               "{{ ENV_ID }}_{{ NODE_TYPE }}{{ '%02d'|format(item[0]|int) }}"
       type:               "{{ NODE_TYPE }}"
       environment:        "{{ ENV_ID }}"
-      KubernetesCluster:  "{{ K8S_CLUSTER_NAME }}"
   with_indexed_items:     "{{ ec2.instance_ids }}"
 
 - name: "Get list of SGs in the {{ ENV_ID }} environment..."
@@ -143,5 +142,4 @@
     resource:             "{{ item.group_id }}"
     tags:
       environment:        "{{ ENV_ID }}"
-      KubernetesCluster:  "{{ K8S_CLUSTER_NAME }}"
   with_items:             "{{ sg.security_groups }}"

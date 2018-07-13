@@ -14,7 +14,7 @@ EC2_KEYPAIR_NAME: "aws_maonishi_us-west-1.pem"
 
 # Amazon Security Group Name - this MUST already
 # exist before our Ansible scripts can be run.
-ec2_security_group: "SG_K8S_2"
+ec2_security_group: "SG_SPARK"
 
 # Location of the servers - the us-east region
 # is generally cheapest.
@@ -46,7 +46,7 @@ server_count_master: 1
 ec2_volumes_master:
   - device_name:  /dev/sda1
     volume_type:  standard
-    volume_size:  16
+    volume_size:  20
     delete_on_termination: true
 
 # The EC2 server type to use.
