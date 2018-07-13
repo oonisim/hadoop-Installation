@@ -5,4 +5,7 @@
   become_user: root
   become_method: sudo
   roles:
+    - setup.yml
+    - build.yml
+    - data.yml
     - naive_bayes
