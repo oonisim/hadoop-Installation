@@ -18,12 +18,12 @@ object kmeans1 extends App
   // data file hdfs - example data
   //    Male,Suspicion of Alcohol,Weekday,12am-4am,75,30-39
 
-  val hdfsServer = "hdfs://aws_master00:8020"
+  val hdfsServer = "hdfs://ip-10-0-0-67.us-west-1.compute.internal:8020"
   val hdfsPath   = "/data/spark/kmeans/"
 
   val dataFile   = hdfsServer + hdfsPath + "DigitalBreathTestData2013.csv" 
 
-  val sparkMaster = "spark://aws_master00:7077"
+  val sparkMaster = "spark://ip-10-0-0-67.us-west-1.compute.internal:7077"
   val appName = "K Means 1"
   val conf = new SparkConf()
 

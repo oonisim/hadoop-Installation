@@ -24,6 +24,12 @@ HADOOP_CONF_HOME: "{{ HADOOP_HOME }}/etc/hadoop"
 HADOOP_CORE_TMP_DIR: "/tmp/hadoop-{{ HADOOP_ADMIN }}"
 
 #--------------------------------------------------------------------------------
+# Name Node configurations
+#--------------------------------------------------------------------------------
+# fs.defaultFS
+HADOOP_NN_PORT: 8020
+
+#--------------------------------------------------------------------------------
 # HDFS configurations
 # https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml
 #--------------------------------------------------------------------------------

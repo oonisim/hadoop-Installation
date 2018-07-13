@@ -25,7 +25,7 @@ object testann2 extends App
 //  val server = "file://"
 //  val path   = "/home/hadoop/spark/ann/data/"
 
-  val server = "hdfs://aws_master00:8020"
+  val server = "hdfs://ip-10-0-0-67.us-west-1.compute.internal:8020"
   val path   = "/data/spark/ann/"
 
   val data1 = server + path + "close_square.img"
@@ -37,7 +37,7 @@ object testann2 extends App
 
   // create the context and config
 
-  val sparkMaster = "spark://aws_master00:8077"
+  val sparkMaster = "spark://ip-10-0-0-67.us-west-1.compute.internal:7077"
   val appName = "ANN 2"
   val conf = new SparkConf()
 

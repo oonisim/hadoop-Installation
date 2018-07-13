@@ -20,7 +20,7 @@
     <property>
         <name>fs.defaultFS</name>
 {% for item in ec2_instance_masters.instances %}
-        <value>hdfs://{{ item.private_dns_name }}:9000</value>
+        <value>hdfs://{{ item.private_dns_name }}:{{ HADOOP_NN_PORT }}</value>
 {% endfor %}
     </property>
 </configuration>

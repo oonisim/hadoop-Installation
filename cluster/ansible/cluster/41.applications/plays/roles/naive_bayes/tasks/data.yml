@@ -27,7 +27,8 @@
   become_user: "{{ HADOOP_ADMIN }}"
   shell: | 
     hdfs dfs -mkdir -p {{ _APP_HDFS_DIR }}
-    unzip -Dop {{ _filename.stdout }} | {{ HADOOP_HOME }}/bin/hdfs dfs -put -f - {{ _APP_HDFS_DIR }}/{{ _filename.stdout }} 
+    unzip -Do {{ _DATA_FILE_URL | basename }}
+    {{ HADOOP_HOME }}/bin/hdfs dfs -put -f {{ _filename.stdout }} {{ _APP_HDFS_DIR }}/{{ _filename.stdout }} 
   args:
     chdir: "{{ _APP_DATA_DIR }}"
   environment: 

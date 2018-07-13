@@ -2,13 +2,35 @@
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: |
-      {{ SPARK_HOME }}/bin/spark-submit \
-      --class bayes1 \
-      --master spark://aws_master00:7077 \ 
-      --executor-memory 700M \
-      --total-executor-cores 100 \ 
-      {{ _APP_BUILD_DIR }}/target/scala-2.11/naive-bayes_2.11-1.0.jar
+    mv \
+    {{ _APP_BUILD_DIR }}/target/scala-2.11/naive-bayes_2.11-1.0.jar \
+    {{ _APP_DIR }}/naive-bayes.jar
+    chmod ug+rwx {{ _APP_DIR }}/naive-bayes.jar
+
+- name: "Run convert"
+  become: true
+  become_user: "{{ SPARK_ADMIN }}"
+  shell: |
+    {{ SPARK_HOME }}/bin/spark-submit \
+    --class convert1 \
+    --master spark://ip-10-0-0-67.us-west-1.compute.internal:7077 \
+    --executor-memory 700M \
+    --total-executor-cores 100 \
+    {{ _APP_DIR }}/naive-bayes.jar
   environment:
     PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"    
-    
+
+- name: "Run bayes"
+  become: true
+  become_user: "{{ SPARK_ADMIN }}"
+  shell: |
+    {{ SPARK_HOME }}/bin/spark-submit \
+    --class bayes1 \
+    --master spark://ip-10-0-0-67.us-west-1.compute.internal:7077 \
+    --executor-memory 700M \
+    --total-executor-cores 100 \
+    {{ _APP_DIR }}/naive-bayes.jar
+  environment:
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
