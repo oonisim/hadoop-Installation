@@ -21,19 +21,33 @@
   args:
     chdir: "{{ _APP_DATA_DIR }}"
   register: _filename
-    
+
 - name: "Place {{ _filename.stdout }} in HDFS"
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
+  # The first line is a header    
   shell: | 
     hdfs dfs -mkdir -p {{ _APP_HDFS_DIR }}
-    unzip -Do {{ _DATA_FILE_URL | basename }}
-    {{ HADOOP_HOME }}/bin/hdfs dfs -put -f {{ _filename.stdout }} {{ _APP_HDFS_DIR }}/{{ _filename.stdout }} 
+    unzip -Dop {{ _DATA_FILE_URL | basename }} | \
+    tail -n +2 | \
+    hdfs dfs -put -f - {{ _APP_HDFS_DIR }}/{{ _filename.stdout }} 
   args:
     chdir: "{{ _APP_DATA_DIR }}"
   environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"    
     
+- name: "Change the owner of the dir/file to  {{ SPARK_ADMIN }} in HDFS for spark to read/write"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: | 
+    hdfs dfs -chown -R {{ SPARK_ADMIN }} {{ _APP_HDFS_DIR }}
+  args:
+    chdir: "{{ _APP_DATA_DIR }}"
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
+
 - name: "Verify placement"
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
