@@ -48,7 +48,7 @@ HADOOP_WORKERS: "{{ lookup('env','HADOOP_WORKERS') }}"
 # HDFS configurations
 # https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml
 #--------------------------------------------------------------------------------
-HADOOP_DFS_REPLICATION: 2
+HADOOP_DFS_REPLICATION: 1
 HADOOP_DFS_BLOCK_SIZE: 134217728
 
 # dfs.datanode.data.dir
