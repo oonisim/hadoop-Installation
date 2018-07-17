@@ -1,0 +1,27 @@
+- name: "Grant write access to /user"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: | 
+    hdfs dfs -mkdir -p /user
+    hdfs dfs -chown -R {{ HADOOP_ADMIN }}:{{ HADOOP_GROUP }} /user
+    hdfs dfs -chmod -R ug+rwx /user
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
+
+#--------------------------------------------------------------------------------
+# See spark-defaults.conf for parameters.
+# - spark.eventLog.enabled
+# - spark.eventLog.dir
+#--------------------------------------------------------------------------------
+- name: "Create event log directory in HDFS"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  # The first line is a header    
+  shell: | 
+    hdfs dfs -mkdir -p {{ SPARK_LOG_DIR }}
+    hdfs dfs -chown -R {{ SPARK_ADMIN }}:{{ HADOOP_GROUP }} {{ SPARK_LOG_DIR }}
+    hdfs dfs -chmod -R ug+rwx {{ SPARK_LOG_DIR }}
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
