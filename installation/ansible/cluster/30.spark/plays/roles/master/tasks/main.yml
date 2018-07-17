@@ -1,14 +1,18 @@
-- name: "Identify JAVA_HOME"
-  import_tasks: env.yml
+- import_tasks: env.yml
 
-# Create event log directory in HDFS.
-- name: "Place {{ _filename.stdout }} in HDFS"
+#--------------------------------------------------------------------------------
+# See spark-defaults.conf for parameters.
+# - spark.eventLog.enabled
+# - spark.eventLog.dir
+#--------------------------------------------------------------------------------
+- name: "Create event log directory in HDFS"
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   # The first line is a header    
   shell: | 
     hdfs dfs -mkdir -p {{ SPARK_LOG_DIR }}
-    hdfs dfs -chown -R {{ SPARK_ADMIN }} {{ SPARK_LOG_DIR }}
+    hdfs dfs -chown -R {{ SPARK_ADMIN }}:{{ HADOOP_GROUP }} {{ SPARK_LOG_DIR }}
+    hdfs dfs -chmod -R ug+rwx {{ SPARK_LOG_DIR }}
   environment: 
     PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"    
@@ -18,7 +22,16 @@
   become_user: "{{ SPARK_ADMIN }}"
   shell: |
     {{ SPARK_HOME }}/sbin/start-all.sh
-    {{ SPARK_HOME }}/sbin/start-history-server.sh
   environment: 
     JAVA_HOME: "{{ java_home.stdout }}"    
         
+- name: "Start history server"
+  become: true
+  become_user: "{{ SPARK_ADMIN }}"
+  shell: |
+    echo "https://stackoverflow.com/questions/38350249"
+    mkdir -p /tmp/spark-events
+    {{ SPARK_HOME }}/sbin/start-history-server.sh
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+

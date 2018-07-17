@@ -19,7 +19,7 @@ SPARK_DOWNLOAD_DIR: "~{{ SPARK_ADMIN }}/downloads"
 SPARK_HOME: "/usr/local/spark"
 
 SPARK_URL: "http://localhost:8080"
-SPARK_LOG_DIR: logs_spark
+SPARK_LOG_DIR: /logs_spark
 
 #--------------------------------------------------------------------------------
 # Scala

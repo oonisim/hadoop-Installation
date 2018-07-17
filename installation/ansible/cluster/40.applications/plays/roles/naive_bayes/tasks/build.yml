@@ -1,3 +1,17 @@
+- name: "Clean {{ _APP_BUILD_DIR }}"
+  file:
+    path:   "{{ _APP_BUILD_DIR }}"
+    state:  absent
+
+- name: "mkdir {{ _APP_BUILD_DIR }}"
+  file:
+    path:   "{{ _APP_BUILD_DIR }}"
+    state:  directory
+    owner:  "{{ SPARK_ADMIN }}"
+    group:  "{{ SPARK_GROUP }}"
+    mode:   0770
+    recurse: true
+
 - name: "Copy package"
   template: 
     src: "{{ item }}"

@@ -4,6 +4,7 @@
 - name: "Stop cluster"
   shell: |
     {{SPARK_HOME}}/sbin/stop-all.sh
+    {{SPARK_HOME}}/sbin/stop-history-server.sh
   become: true
   become_user: "{{ SPARK_ADMIN }}"
   ignore_errors: true

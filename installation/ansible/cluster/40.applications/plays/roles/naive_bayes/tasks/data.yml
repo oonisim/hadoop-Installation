@@ -1,3 +1,39 @@
+- name: "Clean {{ _APP_HDFS_DIR }} in HDFS"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: | 
+    hdfs dfs -rm -r -f {{ _APP_HDFS_DIR }}
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
+  ignore_errors: true
+  
+- name: "Clean {{ _APP_DATA_DIR }}"
+  file:
+    path:   "{{ _APP_DATA_DIR }}"
+    state:  absent
+
+#--------------------------------------------------------------------------------
+# HDFS directory to store data to process
+#--------------------------------------------------------------------------------
+- name: "Create {{ _APP_HDFS_DIR }} in HDFS"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: | 
+    hdfs dfs -mkdir -p {{ _APP_HDFS_DIR }}
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
+
+- name: "mkdir {{ _APP_DATA_DIR }}"
+  file:
+    path:   "{{ _APP_DATA_DIR }}"
+    state:  directory
+    owner:  "{{ SPARK_ADMIN }}"
+    group:  "{{ HADOOP_GROUP }}"
+    mode:   0770
+    recurse: true
+
 - name: "Download data file {{ _DATA_FILE_URL }}"
   get_url:
     url:    "{{ _DATA_FILE_URL }}"

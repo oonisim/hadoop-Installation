@@ -110,13 +110,13 @@ def enumerateCsvRecord( colData:Array[String]): String =
 
   // define variables
 
-  val hdfsServer = "{{ HADOOP_NN_HOSTNAME }}:{{ HADOOP_NN_PORT }}"
+  val hdfsServer = "hdfs://{{ HADOOP_NN_HOSTNAME }}:{{ HADOOP_NN_PORT }}"
   val hdfsPath   = "/data/spark/kmeans/"
 
   val inDataFile  = hdfsServer + hdfsPath + "DigitalBreathTestData2013-MALE2.csv"
   val outDataFile = hdfsServer + hdfsPath + "result"
 
-  val sparkMaster = "spark://{{ SPARK_MASTER_HOSTNAME }}:7077"
+  //val sparkMaster = "spark://{{ SPARK_MASTER_HOSTNAME }}:7077"
   val appName = "Convert 1"
   val sparkConf = new SparkConf()
 

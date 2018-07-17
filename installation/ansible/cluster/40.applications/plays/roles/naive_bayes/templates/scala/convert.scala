@@ -117,7 +117,7 @@ object convert1 extends App
 
   // define variables
 
-  val hdfsServer = "{{ HADOOP_NN_HOSTNAME }}:{{ HADOOP_NN_PORT }}"
+  val hdfsServer = "hdfs://{{ HADOOP_NN_HOSTNAME }}:{{ HADOOP_NN_PORT }}"
   val hdfsPath   = "/data/spark/nbayes/"
 
   val inDataFile  = hdfsServer + hdfsPath + "DigitalBreathTestData2013.txt"
