@@ -1,0 +1,27 @@
+#--------------------------------------------------------------------------------
+# Cleanup
+#--------------------------------------------------------------------------------
+- name: "Clean {{ _APP_HDFS_DIR }} in HDFS"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: | 
+    hdfs dfs -rm -r -f {{ _APP_HDFS_DIR }}
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
+  ignore_errors: true
+  
+- name: "Clean {{ _APP_DIR }}"
+  file:
+    path:   "{{ _APP_DIR }}"
+    state:  absent
+
+- name: "Clean {{ _APP_DATA_DIR }}"
+  file:
+    path:   "{{ _APP_DATA_DIR }}"
+    state:  absent
+
+- name: "Clean {{ _APP_BUILD_DIR }}"
+  file:
+    path:   "{{ _APP_BUILD_DIR }}"
+    state:  absent

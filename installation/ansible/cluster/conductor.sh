@@ -58,7 +58,7 @@ ln -sf ${CONF_DIR}/ansible/callbacks
 #${PLAYER} ${VAULT_PASS} ${REMOTE_USER} ${ARGS}
 
 #ansible-playbook -vvvv -i hosts --limit "environment" --user ${REMOTE_USER} ${ARGS} site.yml --vault-password-file ~/.secret/.vault_pass.txt
-ansible-playbook -vvvv -i hosts --limit "environment" --user ${REMOTE_USER} ${ARGS} site.yml
+ansible-playbook -vvvvv -i hosts --limit "environment" --user ${REMOTE_USER} ${ARGS} site.yml
 
 #--------------------------------------------------------------------------------
 # Clean up

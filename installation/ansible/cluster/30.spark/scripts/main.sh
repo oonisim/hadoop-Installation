@@ -8,6 +8,7 @@ set -eu
 # Environment variable requirements
 #--------------------------------------------------------------------------------
 export HADOOP_NN_HOSTNAME=${HADOOP_NN_HOSTNAME:?"Set HADOOP_NN_HOSTNAME"}
+export SPARK_MASTER_HOSTNAME=${SPARK_MASTER_HOSTNAME:?"Set SPARK_MASTER_HOSTNAME"}
 
 #--------------------------------------------------------------------------------
 # PLAYBOOK_DIR: ../plays as convention

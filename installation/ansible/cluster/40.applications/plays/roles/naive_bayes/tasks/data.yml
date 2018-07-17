@@ -1,17 +1,8 @@
-- name: "mkdir {{ _APP_DATA_DIR }}"
-  file:
-    path:   "{{ _APP_DATA_DIR }}"
-    state:  directory
-    owner:  "{{ HADOOP_ADMIN }}"
-    group:  "{{ HADOOP_GROUP }}"
-    mode:   0770
-    recurse: true
-
 - name: "Download data file {{ _DATA_FILE_URL }}"
   get_url:
     url:    "{{ _DATA_FILE_URL }}"
     dest:   "{{ _APP_DATA_DIR }}"
-    owner:  "{{ HADOOP_ADMIN }}"
+    owner:  "{{ SPARK_ADMIN }}"
     group:  "{{ HADOOP_GROUP }}"
     mode:   0660
 
@@ -27,7 +18,6 @@
   become_user: "{{ HADOOP_ADMIN }}"
   # The first line is a header    
   shell: | 
-    hdfs dfs -mkdir -p {{ _APP_HDFS_DIR }}
     unzip -Dop {{ _DATA_FILE_URL | basename }} | \
     tail -n +2 | \
     hdfs dfs -put -f - {{ _APP_HDFS_DIR }}/{{ _filename.stdout }} 
@@ -42,8 +32,6 @@
   become_user: "{{ HADOOP_ADMIN }}"
   shell: | 
     hdfs dfs -chown -R {{ SPARK_ADMIN }} {{ _APP_HDFS_DIR }}
-  args:
-    chdir: "{{ _APP_DATA_DIR }}"
   environment: 
     PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"    

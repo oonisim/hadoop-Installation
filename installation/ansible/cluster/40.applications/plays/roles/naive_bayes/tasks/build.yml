@@ -1,25 +1,16 @@
-- name: "mkdir {{ _APP_BUILD_DIR }}"
-  file:
-    path:   "{{ _APP_BUILD_DIR }}"
-    state:  directory
-    owner:  "{{ HADOOP_ADMIN }}"
-    group:  "{{ HADOOP_GROUP }}"
-    mode:   0770
-    recurse: true
-
 - name: "Copy package"
-  copy: 
+  template: 
     src: "{{ item }}"
-    dest: "{{ _APP_BUILD_DIR }}"
-    owner:  "{{ HADOOP_ADMIN }}"
-    group:  "{{ HADOOP_GROUP }}"
+    dest: "{{ _APP_BUILD_DIR }}/{{ item | basename }}"
+    owner:  "{{ SPARK_ADMIN }}"
+    group:  "{{ SPARK_GROUP }}"
     mode:   0660
   with_fileglob:
-    - "scala/*"
+    - "{{ role_path }}/templates/scala/*"
 
 - name: "Build scala/spark executable"
   become: true
-  become_user: "{{ HADOOP_ADMIN }}"
+  become_user: "{{ SPARK_ADMIN }}"
   shell: |
     sbt clean
     sbt compile

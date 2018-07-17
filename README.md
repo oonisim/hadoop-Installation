@@ -1,10 +1,13 @@
-Spark standalone cluster deployment using Ansible
+Spark/Hadoop cluster deployment using Ansible
 =========
-Build a standalone Spark in AWS (CentOS or RHEL).
+
+Approach
+------------
+* Dependency should be injected. 
+* Separation of concerns - Each module must not know about the details of other modules.
 
 AWS Network Topology
 ------------
-
 Simple 1 master + 2 workers (can be increased by a parameter) in a VPC subnet, to be created by the Ansible playbooks.
 
 <img src="https://github.com/oonisim/Apache-Spark-Installation/blob/master/Images/AWS.png">

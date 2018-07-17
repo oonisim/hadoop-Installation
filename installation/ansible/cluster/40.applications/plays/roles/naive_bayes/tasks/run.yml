@@ -1,25 +1,21 @@
-- name: "Run app"
-  become: true
-  become_user: "{{ HADOOP_ADMIN }}"
-  shell: |
-    mv \
-    {{ _APP_BUILD_DIR }}/target/scala-2.11/naive-bayes_2.11-1.0.jar \
-    {{ _APP_DIR }}/naive-bayes.jar
-    chmod ug+rwx {{ _APP_DIR }}/naive-bayes.jar
-
+#--------------------------------------------------------------------------------
+# To run Spark with YARN, DO NOT forget to provide HADOOP_CONF_DIR environment
+# at Ansible level as become/sudo will strip away enviornment variables.
+#--------------------------------------------------------------------------------
 - name: "Run convert"
   become: true
   become_user: "{{ SPARK_ADMIN }}"
   shell: |
     {{ SPARK_HOME }}/bin/spark-submit \
     --class convert1 \
-    --master spark://ip-10-0-0-67.us-west-1.compute.internal:7077 \
+    --master {{ SPARK_MASTER }} \
+    --deploy-mode {{ SPARK_DEPLOY_MODE }} \
     --executor-memory 700M \
-    --total-executor-cores 100 \
-    {{ _APP_DIR }}/naive-bayes.jar
+    {{ _APP_BUILD_DIR }}/target/scala-2.11/naive-bayes_2.11-1.0.jar
   environment:
-    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
-    JAVA_HOME: "{{ java_home.stdout }}"    
+#    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_CONF_DIR: "{{ HADOOP_CONF_DIR }}"
 
 - name: "Run bayes"
   become: true
@@ -27,10 +23,11 @@
   shell: |
     {{ SPARK_HOME }}/bin/spark-submit \
     --class bayes1 \
-    --master spark://ip-10-0-0-67.us-west-1.compute.internal:7077 \
+    --master {{ SPARK_MASTER }} \
+    --deploy-mode {{ SPARK_DEPLOY_MODE }} \
     --executor-memory 700M \
-    --total-executor-cores 100 \
-    {{ _APP_DIR }}/naive-bayes.jar
+    {{ _APP_BUILD_DIR }}/target/scala-2.11/naive-bayes_2.11-1.0.jar
   environment:
-    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+#    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"    
+    HADOOP_CONF_DIR: "{{ HADOOP_CONF_DIR }}"

@@ -7,7 +7,8 @@ SPARK_GROUP: spark
 #--------------------------------------------------------------------------------
 # Spark installation package.
 #--------------------------------------------------------------------------------
-SPARK_PACKAGE: "spark-2.3.0-bin-hadoop2.7.tgz"
+SPARK_VERSION: 2.3.0
+SPARK_PACKAGE: "spark-{{ SPARK_VERSION }}-bin-hadoop2.7.tgz"
 SPARK_DOWNLOAD_URL: "http://apache.melbourneitmirror.net/spark/spark-2.3.0/{{ SPARK_PACKAGE }}"
 SPARK_PACKAGE_CHECKSUM: md5:AF45EEB06DC1BEEE6D4C70B92C0E0237
 
@@ -21,12 +22,24 @@ SPARK_URL: "http://localhost:8080"
 SPARK_LOG_DIR: logs_spark
 
 #--------------------------------------------------------------------------------
+# Scala
+#--------------------------------------------------------------------------------
+SCALA_VERSION: 2.11.8
+
+#--------------------------------------------------------------------------------
 # Nodes
 #--------------------------------------------------------------------------------
 SPARK_WORKERS: "{{ lookup('env','SPARK_WORKERS') }}" 
 SPARK_MASTER_HOSTNAME: "{{ lookup('env','SPARK_MASTER_HOSTNAME') }}" 
+SPARK_MASTER_PORT: 7077
 
 #--------------------------------------------------------------------------------
 # Spark master
 #--------------------------------------------------------------------------------
+#SPARK_MASTER: "spark://{{ SPARK_MASTER_HOSTNAME }}:{{ SPARK_MASTER_PORT }}"
 SPARK_MASTER: "yarn"
+
+#--------------------------------------------------------------------------------
+# Mode
+#--------------------------------------------------------------------------------
+SPARK_DEPLOY_MODE: cluster
