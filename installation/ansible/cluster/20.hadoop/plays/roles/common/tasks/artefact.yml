@@ -1,0 +1,19 @@
+#--------------------------------------------------------------------------------
+# Create manifest of hadoop
+#--------------------------------------------------------------------------------
+#- name: "Copy configuration files to local manifest directory"
+#  become: false
+#  with_fileglob:
+#    - "{{ role_path }}/templates/etc/*"
+#  local_action: 
+#    module: template
+#    src:  "{{ item }}"
+#    dest: "{{ HADOOP_ARTEFACT_DIR }}/etc/{{ item | basename | regex_replace('\\.j2','') }}"
+
+- name: "Fetch the files"
+  with_fileglob:
+    - "{{ role_path }}/templates/etc/*"
+  fetch:
+    src:  "{{ HADOOP_CONF_DIR }}/{{ item | basename | regex_replace('\\.j2','') }}"
+    dest: "{{ HADOOP_ARTEFACT_DIR }}/etc/"
+    flat: yes

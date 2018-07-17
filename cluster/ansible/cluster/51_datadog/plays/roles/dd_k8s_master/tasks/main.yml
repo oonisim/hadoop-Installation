@@ -1,2 +1,0 @@
-- import_tasks: permissions.yml
-- import_tasks: dd_check_k8s_components.yml

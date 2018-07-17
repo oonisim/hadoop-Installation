@@ -1,0 +1,33 @@
+- name: "Start HDFS"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ HADOOP_HOME }}/sbin/start-dfs.sh
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+
+- name: "Wait cluster running"
+  shell: |
+    pgrep -a java | grep 'file=hadoop-policy.xml'
+  register: _result
+  until: _result.rc == 0
+  retries: 5
+  delay: 10
+  ignore_errors: true
+
+- name: "Verify HDFS"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ HADOOP_HOME }}/bin/hdfs dfsadmin -report
+    {{ HADOOP_HOME }}/bin/hadoop classpath
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+
+- name: "Start YARN"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ HADOOP_HOME }}/sbin/start-yarn.sh
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    

@@ -1,0 +1,24 @@
+- name: "Stat {{ HADOOP_CONF_DIR }}"
+  stat: 
+    path: "{{ HADOOP_CONF_DIR }}"
+  register: _hadoop_conf_dir
+
+- debug:
+    msg: "{{ _hadoop_conf_dir }}"
+    
+- name: "Create {{ HADOOP_CONF_DIR }}"
+  when: SPARK_MASTER == "yarn" and not (_hadoop_conf_dir.stat.exists == true and _hadoop_conf_dir.stat.isdir == true)
+  file: 
+    path:   "{{ HADOOP_CONF_DIR }}"
+    state:  "directory"
+    owner:  "{{ SPARK_ADMIN }}"
+    group:  "{{ SPARK_GROUP }}"
+    mode:   0770
+  
+- name: copy hadoop file for YARN integration
+  when: SPARK_MASTER == "yarn" and not (_hadoop_conf_dir.stat.exists == true and _hadoop_conf_dir.stat.isdir == true)
+  with_fileglob:
+    - "hadoop/*"
+  copy: 
+    src:  "{{ item }}"
+    dest: "{{ HADOOP_CONF_DIR }}/{{ item | basename }}"

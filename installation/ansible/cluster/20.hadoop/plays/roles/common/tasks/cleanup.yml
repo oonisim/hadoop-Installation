@@ -1,0 +1,26 @@
+#--------------------------------------------------------------------------------
+# Clean up previous installations
+#--------------------------------------------------------------------------------
+- name: "Stop cluster"
+  shell: |
+    {{HADOOP_HOME}}/sbin/stop-dfs.sh
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  ignore_errors: true
+
+- name: "Delete hadoop directories"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ HADOOP_DOWNLOAD_DIR }}"
+    - "{{ HADOOP_HOME }} "
+    - "{{ HADOOP_CORE_TMP_DIR }}"
+    - "{{ HADOOP_DFS_DATA_DIR }}"
+  ignore_errors: true
+
+- name: Delete HADOOP environment variable setups
+  file:
+    path: /etc/profile.d/hadoop.sh
+    state: absent
+  ignore_errors: true

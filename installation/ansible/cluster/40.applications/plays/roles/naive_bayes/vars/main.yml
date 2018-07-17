@@ -1,0 +1,14 @@
+#--------------------------------------------------------------------------------
+# [Data]
+# - Source:
+# https://data.gov.uk/dataset/cb7ae6f0-4be6-4935-9277-47e5ce24a11f/resource/a7583887-cbc2-4bb7-be1f-17b3bb5e0e11
+# - Format:
+# Reason,Month,Year,WeekType,TimeBand,BreathAlcoholLevel(microg 100ml),AgeBand,Gender
+# - Sample:
+# Moving Traffic Violation,Jan,2013,Weekday,12am-4am,80,30-39,Male
+#--------------------------------------------------------------------------------
+_DATA_FILE_URL: "http://data.dft.gov.uk/road-accidents-safety-data/DigitalBreathTestData2013.zip"
+_APP_DIR: "/sparkapps/{{ role_path | basename }}"
+_APP_BUILD_DIR: "{{ _APP_DIR }}/build"
+_APP_DATA_DIR: "{{ _APP_DIR }}/data"
+_APP_HDFS_DIR: "/data/spark/nbayes"

@@ -1,0 +1,25 @@
+#--------------------------------------------------------------------------------
+# Clean up previous installations
+#--------------------------------------------------------------------------------
+- name: "Stop cluster"
+  shell: |
+    {{SPARK_HOME}}/sbin/stop-all.sh
+  become: true
+  become_user: "{{ SPARK_ADMIN }}"
+  ignore_errors: true
+
+- name: "Wait cluster to stop"
+  shell: |
+    pgrep -a java | grep 'spark/conf'
+  register: _result
+  until: _result.rc != 0
+  retries: 5
+  delay: 10
+  ignore_errors: true
+
+- name: "Remove {{ SPARK_PACKAGE }}"
+  shell: |
+    rm {{ SPARK_PACKAGE }}
+  args:
+    chdir: "{{ SPARK_DOWNLOAD_DIR }}"
+  ignore_errors: true

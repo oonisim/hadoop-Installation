@@ -1,0 +1,15 @@
+#--------------------------------------------------------------------------------
+# Setup SSH connections to workers.
+# HDFS commands are via SSH, hence need to create known_hosts.
+#--------------------------------------------------------------------------------
+- name: "SSH into workers"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    ssh -oStrictHostKeyChecking=no $(hostname) uptime
+    for host in $(cat {{ HADOOP_HOME }}/etc/hadoop/slaves | grep -v '^#')
+    do
+      ssh -oStrictHostKeyChecking=no $host uptime
+    done
+  args:
+    executable: /bin/bash

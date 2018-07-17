@@ -1,0 +1,26 @@
+- name: "Stop HDFS"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ HADOOP_HOME }}/sbin/stop-dfs.sh
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+  ignore_errors: true
+
+- name: "Stop YARN"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ HADOOP_HOME }}/sbin/stop-yarn.sh
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+  ignore_errors: true
+
+- name: "Wait cluster to stop"
+  shell: |
+    pgrep -a java | grep 'file=hadoop-policy.xml'
+  register: _result
+  until: _result.rc != 0
+  retries: 5
+  delay: 10
+  ignore_errors: true

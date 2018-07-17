@@ -132,7 +132,7 @@ Parameters for an environment are all isolated in group_vars of the environment 
 
 ```
 .
-├── conf
+├── conf    <----- CONF_DIR environment variable
 │   └── ansible
 │      ├── ansible.cfg
 │      └── inventories
@@ -150,6 +150,7 @@ Parameters for an environment are all isolated in group_vars of the environment 
 │                   ├── ec2.ini
 │                   ├── ec2.py
 │                   └── hosts           <---- Target node(s) using tag values (set upon creating AWS env)
+├── tools   <----- TOOL_DIR environment variable 
 ```
 
 #### EC2_KEYPAIR_NAME
@@ -175,7 +176,7 @@ Set an account name to SPARK_ADMIN in server.yml. The account is created by a pl
 
 Executions
 ------------
-Make sure the environment variables are set, and
+Make sure the environment variables are set.
 
 Environment variables:
 * AWS_ACCESS_KEY_ID
@@ -183,6 +184,8 @@ Environment variables:
 * EC2_KEYPAIR_NAME
 * REMOTE_USER
 * DATADOG_API_KEY
+* CONF_DIR  <--- configuration folder
+* TOOL_DIR  <--- tools folder
 
 Set TARGET_INVENTORY=aws variable which identifies the Ansible inventory **aws**  (same with ENV_ID) to use.
 

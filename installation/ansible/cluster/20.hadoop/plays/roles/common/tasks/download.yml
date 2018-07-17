@@ -1,0 +1,26 @@
+#--------------------------------------------------------------------------------
+# Download package and install
+#--------------------------------------------------------------------------------
+- name: "Create hadoop directories"
+  file:
+    path:   "{{ item }}"
+    state:  directory
+    owner:  "{{ HADOOP_ADMIN }}"
+    group:  "{{ HADOOP_GROUP }}"
+    mode:   0770
+    recurse: true
+  with_items:
+    - "{{ HADOOP_DOWNLOAD_DIR }}"
+    - "{{ HADOOP_HOME }}"
+    - "{{ HADOOP_CORE_TMP_DIR }}"
+    - "{{ HADOOP_DFS_DATA_DIR }}"
+
+
+- name: "Download {{ HADOOP_DOWNLOAD_URL }}"
+  get_url:
+    url:      "{{ HADOOP_DOWNLOAD_URL }}"
+    checksum: "{{ HADOOP_PACKAGE_CHECKSUM }}"
+    dest:     "{{ HADOOP_DOWNLOAD_DIR }}/{{ HADOOP_PACKAGE }}"
+    owner:    "{{ HADOOP_ADMIN }}"
+    group:    "{{ HADOOP_GROUP }}"
+    mode:     0770

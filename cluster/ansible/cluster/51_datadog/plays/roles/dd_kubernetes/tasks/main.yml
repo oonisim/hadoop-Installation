@@ -1,3 +1,0 @@
-- include_tasks: "{{ ansible_distribution }}_{{ ansible_distribution_major_version}}.yml"
-- import_tasks: dd_sa_token.yml
-- import_tasks: dd_check_kubernetes.yml

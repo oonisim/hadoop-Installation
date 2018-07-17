@@ -1,0 +1,46 @@
+- name: "Find JAVA_HOME"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    jrunscript -e 'java.lang.System.out.println(java.lang.System.getProperty("java.home"));'
+  register: java_home
+
+- name: "Clean {{ _APP_HDFS_DIR }}"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  # The first line is a header    
+  shell: | 
+    hdfs dfs -rm -r -f {{ _APP_HDFS_DIR }}
+  args:
+    chdir: "{{ _APP_DATA_DIR }}"
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
+  ignore_errors: true
+  
+- name: "Create {{ _APP_HDFS_DIR }}"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  # The first line is a header    
+  shell: | 
+    hdfs dfs -mkdir -p {{ _APP_HDFS_DIR }}
+  args:
+    chdir: "{{ _APP_DATA_DIR }}"
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
+
+- name: "Clean {{ _APP_DIR }}"
+  file:
+    path:   "{{ _APP_DIR }}"
+    state:  absent
+
+- name: "Create {{ _APP_DIR }}"
+  file:
+    path:   "{{ _APP_DIR }}"
+    state:  directory
+    owner:  "{{ HADOOP_ADMIN }}"
+    group:  "{{ HADOOP_GROUP }}"
+    mode:   0770
+    recurse: true
+

@@ -1,9 +1,0 @@
-#jinja2: lstrip_blocks: "True", trim_blocks: "True"
-#--------------------------------------------------------------------------------
-# Workers
-# Ansible generated file for Spark. 
-# {{ role_path }}/templates/workers.j2
-#--------------------------------------------------------------------------------
-{% for item in ec2_instance_workers.instances %}
-{{ item.private_dns_name }}
-{% endfor %}

@@ -1,2 +1,0 @@
-- include_tasks: "{{ ansible_distribution }}_{{ ansible_distribution_major_version}}.yml"
-- import_tasks: groups.yml

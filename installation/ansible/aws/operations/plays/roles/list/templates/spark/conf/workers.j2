@@ -1,0 +1,9 @@
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+#--------------------------------------------------------------------------------
+# Workers
+# Ansible generated file for Spark. 
+# {{ role_path }}/templates/workers.j2
+#--------------------------------------------------------------------------------
+{% for item in spark_workers %}
+{{ item }}
+{% endfor %}

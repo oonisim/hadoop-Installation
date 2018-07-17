@@ -1,0 +1,13 @@
+---
+- name: System setup for all servers.
+  hosts: environment
+  any_errors_fatal: true
+  become: yes
+  roles:
+    - ulimits
+    - hosts
+    - packages
+    - selinux
+    - firewalld
+    - ntp
+    - user.admin

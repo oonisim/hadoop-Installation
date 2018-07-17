@@ -1,0 +1,55 @@
+
+SYS_USER: "oonisim"
+SYS_GROUP: "wheel"
+PKG_USER: "oonisim"
+
+LINUX_USERS:
+  - name: "{{ HADOOP_ADMIN }}"
+    group: "{{ HADOOP_GROUP }}"
+    groups: "{{ sudoer_group }}"
+    ssh_private_key: "~/.ssh/id_rsa"
+    ssh_authorized_keys:
+      - "~/.ssh/id_rsa.pub"
+    password: "$6$lvOMGppNKTpUOL1u$kf5zKyxl7glYWif4QD3Q0IIoVeG5fy/feZQ5JE.haeHLE4qaNEq8J4Rl6Tg0xJ4L4sxOMA6kmvro34ou2RkPD0"
+  - name: "{{ SPARK_ADMIN }}"
+    group: "{{ SPARK_GROUP }}"
+    groups: "{{ sudoer_group }},{{ HADOOP_GROUP }}"
+    ssh_private_key: "~/.ssh/id_rsa"
+    ssh_authorized_keys:
+      - "~/.ssh/id_rsa.pub"
+    password: "$6$lvOMGppNKTpUOL1u$kf5zKyxl7glYWif4QD3Q0IIoVeG5fy/feZQ5JE.haeHLE4qaNEq8J4Rl6Tg0xJ4L4sxOMA6kmvro34ou2RkPD0"
+#  - name: "{{ SYS_USER }}"
+#    group: "{{ SPARK_GROUP }}"
+#    groups: "{{ DOCKER_GROUP }},{{ sudoer_group }}"
+#    authorized:
+#      - "~/.ssh/id_rsa.pub"
+#    password: "$6$lvOMGppNKTpUOL1u$kf5zKyxl7glYWif4QD3Q0IIoVeG5fy/feZQ5JE.haeHLE4qaNEq8J4Rl6Tg0xJ4L4sxOMA6kmvro34ou2RkPD0"
+#    private_key:
+#      - "{{ DECRYPT_KEY_FILE }}"
+#
+#  - name: "{{ PKG_USER }}"
+#    group: "{{ SPARK_GROUP }}"
+#    groups: "{{ sudoer_group }}"
+#    authorized:
+#      - "/home/{{ PKG_USER }}/.ssh/id_rsa.pub"
+#    password:
+
+
+#--------------------------------------------------------------------------------
+# Constants
+#--------------------------------------------------------------------------------
+NODE_TYPE_MASTER: "master"
+NODE_TYPE_WORKER: "worker"
+
+#--------------------------------------------------------------------------------
+# [Security]
+#--------------------------------------------------------------------------------
+DECRYPT_KEY_FILE: "~/.ssh/private.pem"
+
+#--------------------------------------------------------------------------------
+# Docker
+#--------------------------------------------------------------------------------
+DOCKER_GROUP: "docker"
+DOCKER_USERS:
+  - "{{ SPARK_ADMIN }}"
+

@@ -1,0 +1,35 @@
+#--------------------------------------------------------------------------------
+# Install package
+#--------------------------------------------------------------------------------
+- name: "Install {{ HADOOP_PACKAGE }}"
+  shell: |
+    tar --overwrite --owner={{ HADOOP_ADMIN }} --group={{ HADOOP_GROUP }} -xzvf {{ HADOOP_PACKAGE }} -C {{ HADOOP_HOME }} --strip-components=1
+  args:
+    chdir: "{{ HADOOP_DOWNLOAD_DIR }}"
+
+#--------------------------------------------------------------------------------
+# Setup system wide environment script
+#--------------------------------------------------------------------------------
+- name: "Place hadoop environment setup script in /etc/profile.d/" 
+  with_fileglob:
+    - "{{ role_path }}/templates/profile.d/*"
+  template:
+    src:  "{{ item }}"
+    dest: "/etc/profile.d/{{ item | basename | regex_replace('\\.j2','') }}"
+    mode: 0644
+    backup: yes
+
+#--------------------------------------------------------------------------------
+# Setup configuration files
+#--------------------------------------------------------------------------------
+- name: "Copy configuration files to {{ HADOOP_CONF_DIR }}"
+  with_fileglob:
+    - "{{ role_path }}/templates/etc/*"
+  template:
+    src   : "{{ item }}"
+    dest  : "{{ HADOOP_CONF_DIR }}/{{ item | basename | regex_replace('\\.j2','') }}"
+    owner : "{{ HADOOP_ADMIN }}"
+    group : "{{ HADOOP_GROUP }}"
+    mode  : 0664
+    backup: yes
+  
