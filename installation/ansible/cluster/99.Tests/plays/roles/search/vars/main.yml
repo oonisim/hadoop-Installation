@@ -1,0 +1,5 @@
+lines:
+  - "2018-07-18 11:50:37 INFO  YarnClientSchedulerBackend:54 - Interrupting monitor thread"
+  - "2018-07-18 11:50:37 INFO  DAGScheduler:54 - Job 0 finished: reduce at SparkPi.scala:38, took 1.281790 s"
+  - "Pi is roughly 3.1454111454111455"
+  - "2018-07-18 11:50:37 INFO  AbstractConnector:318 - Stopped Spark@4d157787{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}"

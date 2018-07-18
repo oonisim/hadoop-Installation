@@ -4,6 +4,7 @@
 - name: "Stop cluster"
   shell: |
     {{HADOOP_HOME}}/sbin/stop-dfs.sh
+    {{HADOOP_HOME}}/sbin/stop-yarn.sh
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   ignore_errors: true

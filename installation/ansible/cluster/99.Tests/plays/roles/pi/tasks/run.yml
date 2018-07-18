@@ -1,0 +1,20 @@
+- name: "Running pi example with 16 100"
+  debug:
+    msg: "Expected: [Estimated value of Pi is 3.15000000000000000000]"
+
+- name: "Run Pi"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    hadoop jar {{ HADOOP_HOME }}/share/hadoop/mapreduce/hadoop-mapreduce-examples-{{ HADOOP_VERSION }}.jar pi 16 100
+  environment:
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
+  register: pi
+
+- debug:
+    msg: "The last line of the pi sample is [{{ pi.stdout_lines[-1] }}]"
+
+- fail:
+    msg: "{{ pi.stdout_lines[-1] | regex_replace('^Estimated value of Pi is ([^0]*).*$', '\\1') }} is not 3.15 as expected." 
+  when: ( pi.stdout_lines[-1] | regex_replace('^Estimated value of Pi is ([^0]*).*$', '\\1') ) != "3.15"

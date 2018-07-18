@@ -1,0 +1,18 @@
+- name: "search string"
+  with_items: "{{ lines }}"
+  set_fact: 
+    match: "{{ item | regex_search('Pi is roughly [0-9.]*') }}"
+  register: matches
+
+- set_fact:
+    result: "{{ lines | join('') | regex_search('Pi is roughly [0-9.]*') }}"
+  failed_when: result == ""
+  
+- set_fact:
+    extract: "{{ matches.results | map(attribute='ansible_facts.match') | join('') }}"
+    
+- debug:
+    msg: "{{ extract }}"
+
+#- name: "'unnest' all elements into single list"
+#  debug: msg="all in one list {{lookup('flatten', lines) }}"

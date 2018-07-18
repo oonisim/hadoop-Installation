@@ -1,4 +1,17 @@
 #--------------------------------------------------------------------------------
+# Remove the conversion result data.
+#--------------------------------------------------------------------------------
+- name: "Clean {{ _APP_HDFS_IN_DIR }}/DigitalBreathTestData2013.csv in HDFS"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: | 
+    hdfs dfs -rm -r -f {{ _APP_HDFS_IN_DIR }}/DigitalBreathTestData2013.csv
+  environment: 
+    PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
+    JAVA_HOME: "{{ java_home.stdout }}"    
+  ignore_errors: true
+
+#--------------------------------------------------------------------------------
 # To run Spark with YARN, DO NOT forget to provide HADOOP_CONF_DIR environment
 # at Ansible level as become/sudo will strip away enviornment variables.
 #--------------------------------------------------------------------------------

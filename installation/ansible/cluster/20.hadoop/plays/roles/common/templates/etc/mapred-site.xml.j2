@@ -21,4 +21,20 @@
       <name>mapreduce.framework.name</name>
       <value>yarn</value>
     </property>
+    <property>
+        <name>mapreduce.map.memory.mb</name>
+        <value>{{ YARN_MR_MAP_MEMORY_MB }}</value>
+    </property>
+    <property>
+        <name>mapreduce.map.java.opts</name>
+        <value>{{ YARN_MR_MAP_JAVA_OPTS }}</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.memory.mb</name>
+        <value>{{ YARN_MR_REDUCE_MEMORY_MB }}</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.java.opts</name>
+        <value>{{ YARN_MR_REDUCE_JAVA_OPTS }}</value>
+    </property>
 </configuration>

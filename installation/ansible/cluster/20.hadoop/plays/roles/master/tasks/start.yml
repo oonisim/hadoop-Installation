@@ -6,6 +6,14 @@
   environment: 
     JAVA_HOME: "{{ java_home.stdout }}"    
 
+- name: "Start YARN"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ HADOOP_HOME }}/sbin/start-yarn.sh
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+
 - name: "Wait cluster running"
   shell: |
     pgrep -a java | grep 'file=hadoop-policy.xml'
@@ -24,10 +32,3 @@
   environment: 
     JAVA_HOME: "{{ java_home.stdout }}"    
 
-- name: "Start YARN"
-  become: true
-  become_user: "{{ HADOOP_ADMIN }}"
-  shell: |
-    {{ HADOOP_HOME }}/sbin/start-yarn.sh
-  environment: 
-    JAVA_HOME: "{{ java_home.stdout }}"    

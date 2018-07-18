@@ -3,7 +3,7 @@ name := "Naive Bayes"
 
 version := "1.0"
 
-scalaVersion := "{{ SCALA_VERSION }}"
+scalaVersion := "2.11.8"
 val sparkVersion = "{{ SPARK_VERSION }}"
 
 libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.7.0"

@@ -1,0 +1,19 @@
+#--------------------------------------------------------------------------------
+# Run samples
+#--------------------------------------------------------------------------------
+- name: "Run Pi"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ SPARK_HOME}}/bin/spark-submit --class org.apache.spark.examples.SparkPi \
+      {{ SPARK_HOME}}/examples/jars/{{ SPARK_EXAMPLE_JAR }} 10 \
+      --master {{ SPARK_MASTER }} \
+      --deploy-mode {{ SPARK_DEPLOY_MODE }}
+  environment:
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_CONF_DIR: "{{ HADOOP_CONF_DIR }}"
+  register: pi
+
+- set_fact:
+    result: "{{ pi.stdout_lines | join(' ') | regex_search('Pi is roughly [0-9.]*') }}"
+  failed_when: result == ""

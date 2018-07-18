@@ -21,4 +21,8 @@
         <name>fs.defaultFS</name>
         <value>hdfs://{{ HADOOP_NN_HOSTNAME }}:{{ HADOOP_NN_PORT }}</value>
     </property>
+    <property>
+        <name>io.file.buffer.size</name>
+        <value>{{ HADOOP_IO_FILE_BUFFER_SIZE }} </value>
+    </property>
 </configuration>

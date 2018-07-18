@@ -18,15 +18,10 @@ object bayes1 extends App
   //    Male,Suspicion of Alcohol,Weekday,12am-4am,75,30-39
 
   val hdfsServer = "hdfs://{{ HADOOP_NN_HOSTNAME }}"
-  val hdfsPath   = "/data/spark/nbayes/"
-
-  val dataFile = hdfsServer+hdfsPath+"DigitalBreathTestData2013.csv"
-
-  val sparkMaster = "spark://ip-10-0-0-67.us-west-1.compute.internal:7077"
+  val dataFile = hdfsServer+ "{{ _APP_HDFS_IN_DIR }}" + "/" + "DigitalBreathTestData2013.csv"
   val appName = "Naive Bayes 1"
   val conf = new SparkConf()
 
-  //conf.setMaster(sparkMaster)
   conf.setAppName(appName)
 
   // create the spark context

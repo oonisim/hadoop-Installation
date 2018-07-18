@@ -1,0 +1,31 @@
+- name: "Stop cluster"
+  become: true
+  become_user: "{{ SPARK_ADMIN }}"
+  shell: |
+    {{ SPARK_HOME }}/sbin/stop-all.sh
+    {{ SPARK_HOME }}/sbin/stop-history-server.sh
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+  ignore_errors: true
+
+- name: "Start cluster"
+  become: true
+  become_user: "{{ SPARK_ADMIN }}"
+  shell: |
+    {{ SPARK_HOME }}/sbin/start-all.sh
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    
+
+#--------------------------------------------------------------------------------        
+# Need to create /tmp/spark-events to start history server otherwise it fails.
+# See https://stackoverflow.com/questions/38350249.
+#--------------------------------------------------------------------------------        
+- name: "Start history server"
+  become: true
+  become_user: "{{ SPARK_ADMIN }}"
+  shell: |
+    echo "https://stackoverflow.com/questions/38350249"
+    mkdir -p /tmp/spark-events
+    {{ SPARK_HOME }}/sbin/start-history-server.sh
+  environment: 
+    JAVA_HOME: "{{ java_home.stdout }}"    

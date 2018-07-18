@@ -118,11 +118,10 @@ object convert1 extends App
   // define variables
 
   val hdfsServer = "hdfs://{{ HADOOP_NN_HOSTNAME }}:{{ HADOOP_NN_PORT }}"
-  val hdfsPath   = "/data/spark/nbayes/"
 
-  val inDataFile  = hdfsServer + hdfsPath + "DigitalBreathTestData2013.txt"
-  val outDataDir  = hdfsServer + hdfsPath + "result"
-  val resultFile = hdfsServer + hdfsPath + "DigitalBreathTestData2013.csv"
+  val inDataFile = hdfsServer + "{{ _APP_HDFS_IN_DIR }}" + "/" + "DigitalBreathTestData2013.txt"
+  val outDataDir = hdfsServer + "{{ _APP_HDFS_OUT_DIR }}"
+  val resultFile = hdfsServer + "{{ _APP_HDFS_IN_DIR }}" + "/" + "DigitalBreathTestData2013.csv"
 
   val sparkMaster = "spark://{{ SPARK_MASTER_HOSTNAME }}:7077"
   val appName = "Convert 1"
@@ -156,10 +155,10 @@ object convert1 extends App
 
   println("Records out : "+ enumRddData.count() )
 
-  enumRddData.saveAsTextFile(outDataDir)
+  enumRddData.saveAsTextFile(resultFile)
 
   // Merge files into one file in HDFS as the NBayes input file.
   // https://stackoverflow.com/questions/14831117/merging-hdfs-files
-  sparkCxt.textFile(outDataDir + "/part*").coalesce(1).saveAsTextFile(resultFile)
+  //sparkCxt.textFile(outDataDir + "/part*").coalesce(1).collect.saveAsTextFile(resultFile)
 } // end object
 

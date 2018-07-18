@@ -48,22 +48,54 @@ HADOOP_WORKERS: "{{ lookup('env','HADOOP_WORKERS') }}"
 # HDFS configurations
 # https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml
 #--------------------------------------------------------------------------------
-HADOOP_DFS_REPLICATION: 1
+HADOOP_DFS_REPLICATION: 2
 HADOOP_DFS_BLOCK_SIZE: 134217728
-
+# io.file.buffer.size (Hadoop uses buffer size of 4KB by default for its I/O operations)
+# Can increase it to 128K in order to get good performance
+HADOOP_IO_FILE_BUFFER_SIZE: 131072
+# dfs.client.read.shortcircuit (Read data block directly from the disk on the node if it is on the same node)
+# Needs native library and dfs.domain.socket.path setting is required.
+# https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/ShortCircuitLocalReads.html
+# https://www.cloudera.com/documentation/enterprise/5-12-x/topics/admin_hdfs_short_circuit_reads.html
+HADOOP_DFS_CLIENT_READ_SHORTCIRCUIT: false
+# dfs.domain.socket.path
+HADOOP_DFS_DOMAIN_SOCKET_PATH: /var/lib/hadoop-hdfs/dn_socket
 # dfs.datanode.data.dir
 HADOOP_DFS_DATA_DIR: "/home/{{ HADOOP_ADMIN }}/dfs/data"
+
+
 
 #--------------------------------------------------------------------------------
 # YARN configurations
 #--------------------------------------------------------------------------------
-# yarn.resourcemanager.hostname<
+# yarn.resourcemanager.hostname
 YARN_RM_HOSTNAME:  "{{ lookup('env','YARN_RM_HOSTNAME') }}"
-# yarn.nodemanager.resource.cpu-vcores
+# yarn.nodemanager.resource.cpu-vcores (The number of cores that a node manager can allocate to containers)
+# It should be set to the total number of cores on the machine, minus a core for each daemon process running on the machine (datanode, node manager, and any other long-running processes).
 YARN_NM_CPU_VCORES: 2
-# yarn.nodemanager.resource.memory-mb
-YARN_NM_MEMORY_MB: 2048
+# yarn.nodemanager.resource.memory-mb (Total amount of physical memory (RAM) for Containers on worker node.)
+# Set this property= Total RAM – (RAM for OS + Hadoop Daemons + Other services)
+YARN_NM_MEMORY_MB: 6144
 # yarn.nodemanager.aux-services
 YARN_NM_AUX_SERVICES: mapreduce_shuffle
 # yarn.nodemanager.aux-services.mapreduce_shuffle.class
 YARN_NM_AUX_SERVICES_SHUFFLE_CLASS: org.apache.hadoop.mapred.ShuffleHandler
+# yarn.nodemanager.vmem-check-enabled
+# To avoid Container running beyond virtual memory limits on CentOS/RHEL, set to false.
+# http://blog.cloudera.com/blog/2014/04/apache-hadoop-yarn-avoiding-6-time-consuming-gotchas/
+# https://issues.apache.org/jira/browse/YARN-4714
+YARN_NM_VMEM_CHECK_ENABLED: false
+
+#--------------------------------------------------------------------------------
+# Map Reduce configurations
+#--------------------------------------------------------------------------------
+# mapreduce.map.memory.mb
+YARN_MR_MAP_MEMORY_MB: 2048
+# mapreduce.reduce.memory.mb
+YARN_MR_REDUCE_MEMORY_MB: 2048
+# mapreduce.map.java.opts (must be < YARN_MR_MAP_MEMORY_MB)
+# https://stackoverflow.com/questions/24070557
+# http://doc.mapr.com/display/MapR/mapred-site.xml
+YARN_MR_MAP_JAVA_OPTS: -Xmx1024M
+# mapreduce.reduce.java.opts (must be < YARN_MR_REDUCE_MEMORY_MB)
+YARN_MR_REDUCE_JAVA_OPTS: -Xmx1024M

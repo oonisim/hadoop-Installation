@@ -7,7 +7,14 @@ SPARK_GROUP: spark
 #--------------------------------------------------------------------------------
 # Spark installation package.
 #--------------------------------------------------------------------------------
+# [Spark 2.3]
+# https://spark.apache.org/docs/2.3.0/
+# Scala version for Spark 
+# (NOT to compile scala programs nor for sbt)
+# For the Scala API, Spark 2.3.0 uses Scala 2.11. Need compatible Scala (2.11.x).
+#--------------------------------------------------------------------------------
 SPARK_VERSION: 2.3.0
+SPARK_SCALA_VERSION: 2.11
 SPARK_PACKAGE: "spark-{{ SPARK_VERSION }}-bin-hadoop2.7.tgz"
 SPARK_DOWNLOAD_URL: "http://apache.melbourneitmirror.net/spark/spark-2.3.0/{{ SPARK_PACKAGE }}"
 SPARK_PACKAGE_CHECKSUM: md5:AF45EEB06DC1BEEE6D4C70B92C0E0237
@@ -21,10 +28,7 @@ SPARK_HOME: "/usr/local/spark"
 SPARK_URL: "http://localhost:8080"
 SPARK_LOG_DIR: /logs_spark
 
-#--------------------------------------------------------------------------------
-# Scala
-#--------------------------------------------------------------------------------
-SCALA_VERSION: 2.11.8
+SPARK_EXAMPLE_JAR: "spark-examples_{{ SPARK_SCALA_VERSION }}-{{ SPARK_VERSION }}.jar" 
 
 #--------------------------------------------------------------------------------
 # Nodes
@@ -43,3 +47,16 @@ SPARK_MASTER: "yarn"
 # Mode
 #--------------------------------------------------------------------------------
 SPARK_DEPLOY_MODE: cluster
+
+
+#--------------------------------------------------------------------------------
+# Spark properties 
+#--------------------------------------------------------------------------------
+SPARK_DRIVER_MEMORY: 2g
+# spark.hadoop.validateOutputSpecs (see https://stackoverflow.com/questions/27033823 too)
+# If set to true, validates the output specification (e.g. checking if the output 
+# directory already exists) used in saveAsHadoopFile and other variants.
+#
+# Spark re-run if an executor fails, which can cause file already exits error.
+# This flag turns off the check if the file/directory already exits.
+SPARK_HADOOP_VALIDATEOUTPUTSPECS: true

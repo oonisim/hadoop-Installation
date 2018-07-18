@@ -11,4 +11,6 @@ _DATA_FILE_URL: "http://data.dft.gov.uk/road-accidents-safety-data/DigitalBreath
 _APP_DIR: "/sparkapps/{{ role_path | basename }}"
 _APP_BUILD_DIR: "{{ _APP_DIR }}/build"
 _APP_DATA_DIR: "{{ _APP_DIR }}/data"
-_APP_HDFS_DIR: "/data/spark/nbayes"
+_APP_HDFS_IN_DIR: "/data/spark/nbayes/"
+_APP_HDFS_OUT_DIR: "/data/spark/nbayes/out"
+
