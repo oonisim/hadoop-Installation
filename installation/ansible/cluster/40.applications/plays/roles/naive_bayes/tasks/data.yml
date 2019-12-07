@@ -2,8 +2,8 @@
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: | 
-    hdfs dfs -rm -r -f {{ _APP_HDFS_IN_DIR }}
-    hdfs dfs -rm -r -f {{ _APP_HDFS_OUT_DIR }}
+    hadoop fs -rm -r -f {{ _APP_HDFS_IN_DIR }}
+    hadoop fs -rm -r -f {{ _APP_HDFS_OUT_DIR }}
   environment: 
     PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"    
@@ -21,7 +21,7 @@
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: | 
-    hdfs dfs -mkdir -p {{ _APP_HDFS_IN_DIR }}
+    hadoop fs -mkdir -p {{ _APP_HDFS_IN_DIR }}
   environment: 
     PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"    
@@ -57,7 +57,7 @@
   shell: | 
     unzip -Dop {{ _DATA_FILE_URL | basename }} | \
     tail -n +2 | \
-    hdfs dfs -put -f - {{ _APP_HDFS_IN_DIR }}/{{ _filename.stdout }} 
+    hadoop fs -put -f - {{ _APP_HDFS_IN_DIR }}/{{ _filename.stdout }}
   args:
     chdir: "{{ _APP_DATA_DIR }}"
   environment: 
@@ -68,7 +68,7 @@
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: | 
-    hdfs dfs -chown -R {{ SPARK_ADMIN }} {{ _APP_HDFS_IN_DIR }}
+    hadoop fs -chown -R {{ SPARK_ADMIN }} {{ _APP_HDFS_IN_DIR }}
   environment: 
     PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"    
@@ -77,7 +77,7 @@
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: | 
-    hdfs dfs -ls {{ _APP_HDFS_IN_DIR }}
+    hadoop fs -ls {{ _APP_HDFS_IN_DIR }}
   environment: 
     PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"    

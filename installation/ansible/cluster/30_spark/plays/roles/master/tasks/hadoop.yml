@@ -2,9 +2,9 @@
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: | 
-    hdfs dfs -mkdir -p /user
-    hdfs dfs -chown -R {{ HADOOP_ADMIN }}:{{ HADOOP_GROUP }} /user
-    hdfs dfs -chmod -R ug+rwx /user
+    hadoop fs -mkdir -p /user
+    hadoop fs -chown -R {{ HADOOP_ADMIN }}:{{ HADOOP_GROUP }} /user
+    hadoop fs -chmod -R ug+rwx /user
   environment: 
     PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"
