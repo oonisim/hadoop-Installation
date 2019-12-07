@@ -1,11 +1,19 @@
 #--------------------------------------------------------------------------------
 # Install package
+#
+# This does not work as the owner:group became ansible:docker ... why?
+# -> tar --overwrite --owner={{ HADOOP_ADMIN }} --group={{ HADOOP_GROUP }} -xzvf {{ HADOOP_PACKAGE }} -C {{ HADOOP_HOME }} --strip-components=1
 #--------------------------------------------------------------------------------
 - name: "Install {{ HADOOP_PACKAGE }}"
   shell: |
-    tar --overwrite --owner={{ HADOOP_ADMIN }} --group={{ HADOOP_GROUP }} -xzvf {{ HADOOP_PACKAGE }} -C {{ HADOOP_HOME }} --strip-components=1
+    tar --overwrite -xzvf {{ HADOOP_PACKAGE }} -C {{ HADOOP_HOME }} --strip-components=1
+    chown -R {{ HADOOP_ADMIN }}:{{ HADOOP_GROUP }} {{ HADOOP_HOME }}
   args:
     chdir: "{{ HADOOP_DOWNLOAD_DIR }}"
+
+- pause:
+    prompt: "The system has restarted to complete disabling swap (otherwise error with kubeadm)..."
+
 
 #--------------------------------------------------------------------------------
 # Setup system wide environment script

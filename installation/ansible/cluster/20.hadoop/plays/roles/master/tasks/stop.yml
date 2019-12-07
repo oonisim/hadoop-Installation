@@ -18,6 +18,16 @@
     HADOOP_HOME: "{{ HADOOP_HOME }}"
   ignore_errors: true
 
+- name: "Stop all just in case"
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ HADOOP_HOME }}/sbin/stop-all.sh
+  environment:
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_HOME: "{{ HADOOP_HOME }}"
+  ignore_errors: true
+
 - name: "Wait cluster to stop"
   shell: |
     pgrep -a java | grep 'file=hadoop-policy.xml'

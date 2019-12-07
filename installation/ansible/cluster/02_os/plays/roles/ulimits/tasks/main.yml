@@ -17,7 +17,7 @@
 - name: "ulimit for {{ SPARK_ADMIN }}"
   shell:
     cmd: |
-      sudo tee /etc/sysctl.d/hdfs.conf <<EOF
+      sudo tee /etc/sysctl.d/spark.conf <<EOF
       @{{ SPARK_ADMIN | quote }}           soft    nofile          10000
       @{{ SPARK_ADMIN | quote }}           hard    nofile          10000
       @{{ SPARK_ADMIN | quote }}           soft    nproc           8096
