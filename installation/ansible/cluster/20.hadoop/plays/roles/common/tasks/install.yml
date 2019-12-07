@@ -11,10 +11,6 @@
   args:
     chdir: "{{ HADOOP_DOWNLOAD_DIR }}"
 
-- pause:
-    prompt: "The system has restarted to complete disabling swap (otherwise error with kubeadm)..."
-
-
 #--------------------------------------------------------------------------------
 # Setup system wide environment script
 #--------------------------------------------------------------------------------
