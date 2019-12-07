@@ -22,13 +22,12 @@
     name:     "{{ item.name }}"
     group:    "{{ item.group }}"
     groups:   "{{ item.groups }}"
-    append:   "yes"                 # useradd -aG
-    password: "{{ item.password }}"
-    system:   yes
+    append:   "yes"              #    useradd -aG
+    #password: "{{ item.password }}"
+    system:   no
     shell:    /bin/bash
     state:    present
   with_items:
-    - "{{ LINUX_USERS }}"
-
+    - "{{ HADOOP_USERS }}"
 
 - include_tasks: ssh.yml

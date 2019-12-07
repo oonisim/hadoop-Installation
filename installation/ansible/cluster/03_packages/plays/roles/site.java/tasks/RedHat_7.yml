@@ -1,0 +1,7 @@
+- name: Install OpenJDK packages...
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    "{{ packages }}"

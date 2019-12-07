@@ -18,6 +18,10 @@
 
 <configuration>
   <property>
+    <name>hadoop.tmp.dir</name>
+    <value>{{ HADOOP_DFS_DATA_DIR }}</value>
+  </property>
+  <property>
     <name>dfs.replication</name>
     <value>{{ HADOOP_DFS_REPLICATION }}</value>
   </property>

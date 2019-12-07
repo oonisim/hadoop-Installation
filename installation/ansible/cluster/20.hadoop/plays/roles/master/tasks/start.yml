@@ -4,7 +4,8 @@
   shell: |
     {{ HADOOP_HOME }}/sbin/start-dfs.sh
   environment: 
-    JAVA_HOME: "{{ java_home.stdout }}"    
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_HOME: "{{ HADOOP_HOME }}"
 
 - name: "Start YARN"
   become: true
@@ -12,7 +13,8 @@
   shell: |
     {{ HADOOP_HOME }}/sbin/start-yarn.sh
   environment: 
-    JAVA_HOME: "{{ java_home.stdout }}"    
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_HOME: "{{ HADOOP_HOME }}"
 
 - name: "Wait cluster running"
   shell: |
@@ -30,5 +32,6 @@
     {{ HADOOP_HOME }}/bin/hdfs dfsadmin -report
     {{ HADOOP_HOME }}/bin/hadoop classpath
   environment: 
-    JAVA_HOME: "{{ java_home.stdout }}"    
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_HOME: "{{ HADOOP_HOME }}"
 

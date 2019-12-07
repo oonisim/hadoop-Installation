@@ -3,8 +3,8 @@ set -eu
 DIR=$(realpath $(dirname $0))
 cd ${DIR}
 
-. ${DIR}/_setup_env_installer.sh
-. ${DIR}/_setup_env_cluster.sh
+# Python user site
+export PATH=${PATH}:${HOME}/.local/bin
 
 #--------------------------------------------------------------------------------
 # Target environment/inventory and Ansibe remote_user to use
@@ -24,12 +24,18 @@ else
 fi
 
 #--------------------------------------------------------------------------------
+# Environment variables
+#--------------------------------------------------------------------------------
+. ${DIR}/_setup_env_installer.sh
+. ${DIR}/_setup_env_cluster.sh
+
+#--------------------------------------------------------------------------------
 # Run Spark setup
 #--------------------------------------------------------------------------------
 ./maintenance.sh
-for module in $(find ./ansible/cluster -type d -maxdepth 1 -mindepth 1)
+${DIR}/propagate_artefacts.sh
+for module in $(find ./ansible/cluster -type d -maxdepth 1 -mindepth 1 | sort)
 do
-    ${DIR}/propagate_artefacts.sh
     ${module}/scripts/main.sh \
         ${TARGET_INVENTORY} \
         ${REMOTE_USER} 

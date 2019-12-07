@@ -37,4 +37,18 @@
         <name>mapreduce.reduce.java.opts</name>
         <value>{{ YARN_MR_REDUCE_JAVA_OPTS }}</value>
     </property>
+
+    <property>
+      <name>yarn.app.mapreduce.am.env</name>
+      <value>HADOOP_MAPRED_HOME={{ HADOOP_HOME }}</value>
+    </property>
+    <property>
+      <name>mapreduce.map.env</name>
+      <value>HADOOP_MAPRED_HOME={{ HADOOP_HOME }}</value>
+    </property>
+    <property>
+      <name>mapreduce.reduce.env</name>
+      <value>HADOOP_MAPRED_HOME={{ HADOOP_HOME }}</value>
+    </property>
+
 </configuration>

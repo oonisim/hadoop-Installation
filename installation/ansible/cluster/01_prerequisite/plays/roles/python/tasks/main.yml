@@ -46,7 +46,7 @@
   when: isUbuntu.rc == 0
 
 - name: Ubuntu install Python packages...
-  raw: apt-get install -qy {{ item }}
+  raw: apt-get install -qy {{ item }} --reinstall
   with_items: "{{ python_packages }}"
   when: isUbuntu.rc == 0
 #      when: isUbuntu.rc == 0 and isPython.rc != 0

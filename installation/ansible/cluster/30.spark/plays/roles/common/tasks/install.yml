@@ -1,9 +1,6 @@
 #--------------------------------------------------------------------------------
 # Install Packages
 #--------------------------------------------------------------------------------
-- include_vars: "{{ ansible_distribution }}_{{ ansible_distribution_major_version}}.yml"
-- include_tasks: "{{ ansible_distribution }}_{{ ansible_distribution_major_version}}.yml"
-
 - name: "Create/recreate {{ SPARK_DOWNLOAD_DIR }}"
   file:
     path:   "{{ SPARK_DOWNLOAD_DIR }}"

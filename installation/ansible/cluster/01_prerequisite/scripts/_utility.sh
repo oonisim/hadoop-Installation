@@ -1,3 +1,4 @@
+#. ${SCRIPT_BASE:?'Set SCRIPT_BASE'}/_utility.sh
 #/bin/bash
 #--------------------------------------------------------------------------------
 # Search a directory tree from START upwards until END to locate a specified path.
@@ -6,7 +7,7 @@ _locate(){
     START=$1; END=$2; PATTERN=$3
 
     path="${START}"
-    while [[ $path != ${END} ]];
+    until [[ ${END} > $path ]]
     do
         #find "$path" -maxdepth 1 -mindepth 1 -path "*/${PATTERN}" | egrep '.*'
         find "$path" -path "*/${PATTERN}" | egrep '.*'

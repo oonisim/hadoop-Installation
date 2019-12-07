@@ -1,19 +1,14 @@
-
-SYS_USER: "oonisim"
-SYS_GROUP: "wheel"
-PKG_USER: "oonisim"
-
-LINUX_USERS:
+HADOOP_USERS:
   - name: "{{ HADOOP_ADMIN }}"
     group: "{{ HADOOP_GROUP }}"
-    groups: "{{ sudoer_group }}"
+    groups: "{{ SPARK_GROUP }}"
     ssh_private_key: "~/.ssh/id_rsa"
     ssh_authorized_keys:
       - "~/.ssh/id_rsa.pub"
     password: "$6$lvOMGppNKTpUOL1u$kf5zKyxl7glYWif4QD3Q0IIoVeG5fy/feZQ5JE.haeHLE4qaNEq8J4Rl6Tg0xJ4L4sxOMA6kmvro34ou2RkPD0"
   - name: "{{ SPARK_ADMIN }}"
     group: "{{ SPARK_GROUP }}"
-    groups: "{{ sudoer_group }},{{ HADOOP_GROUP }}"
+    groups: "{{ HADOOP_GROUP }}"
     ssh_private_key: "~/.ssh/id_rsa"
     ssh_authorized_keys:
       - "~/.ssh/id_rsa.pub"

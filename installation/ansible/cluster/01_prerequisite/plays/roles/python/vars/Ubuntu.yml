@@ -1,7 +1,10 @@
 python_packages:
   - python-simplejson
   - python2.7
+#  - python3.6
   - aptitude
   - python-apt
+  - python3-apt
   - python-pip
+  - python3-pip
   - python-boto

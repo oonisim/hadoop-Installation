@@ -1,0 +1,10 @@
+# OTN shutdown the public access
+#- name: Oracke Java provision.
+#  include_role:
+#    name: williamyeh.oracle-java
+#  vars:
+#    java_version: 8
+
+# http://openjdk.java.net/install/
+- include_vars: "{{ ansible_distribution }}_{{ ansible_distribution_major_version}}.yml"
+- include     : "{{ ansible_distribution }}_{{ ansible_distribution_major_version}}.yml"

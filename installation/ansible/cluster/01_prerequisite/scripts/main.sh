@@ -3,13 +3,18 @@
 # Run the ansible playbook.
 #--------------------------------------------------------------------------------
 set -eu
+DIR=$(realpath $(dirname $0))
+
+#--------------------------------------------------------------------------------
+# Setup ansible environment
+#--------------------------------------------------------------------------------
+#${DIR}/setup.sh
 
 #--------------------------------------------------------------------------------
 # PLAYBOOK_DIR: ../plays as convention
 # TARGET:       Target environment
 # REMOTE_USER:  SSH user on the remote server
 #--------------------------------------------------------------------------------
-DIR=$(realpath $(dirname $0))
 PLAYBOOK_DIR=$(realpath "$(dirname $0)/../plays")
 if [ $# -ge 2 ]; then
     TARGET=$1
@@ -30,12 +35,14 @@ fi
 
 . ${DIR}/_utility.sh
 . ${DIR}/_pretask.sh
+. ${DIR}/_python.sh
 
 echo "#--------------------------------------------------------------------------------"
-echo "# starting ansible playbook (it may take a while in case of EC2)..."
+echo "# starting ansible playbook ..."
 echo "#--------------------------------------------------------------------------------"
 
-$(_locate ${DIR} '/' 'conductor.sh') \
+#$(_locate ${DIR} "${SCRIPT_BASE}" 'conductor.sh') \
+$(_locate ${DIR} "/" 'conductor.sh') \
   ${PLAYBOOK_DIR} \
   ${TARGET} \
   ${REMOTE_USER} \

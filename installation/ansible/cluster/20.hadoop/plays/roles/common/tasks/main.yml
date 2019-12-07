@@ -1,4 +1,7 @@
-- import_tasks: cleanup.yml
-- import_tasks: download.yml
+#- import_tasks: cleanup.yml
+- import_tasks: env.yml
+#- import_tasks: download.yml
 - import_tasks: install.yml
-- import_tasks: artefact.yml
+
+# Not sure what this is for ...
+#- import_tasks: artefact.yml

@@ -3,7 +3,7 @@
 # https://github.com/enginyoyen/ansible-best-practises/blob/master/extensions/setup/setup.sh
 # Based on MIT License.
 #--------------------------------------------------------------------------------
-set -eu
+set -ue
 
 COLOR_END='\e[0m'
 COLOR_RED='\e[0;31m' # Red
@@ -41,6 +41,15 @@ if [ "$system" == "Linux" ]; then
 fi
 
 echo "--------------------------------------------------------------------------------"
+echo "Installing/updating pip"
+echo "--------------------------------------------------------------------------------"
+_TMPDIR=$(mktemp -d)
+curl https://bootstrap.pypa.io/get-pip.py > ${_TMPDIR}/get-pip.py
+python3 ${_TMPDIR}/get-pip.py --user && rm -rf ${_TMPDIR}
+pip install -U pip --user
+
+echo "--------------------------------------------------------------------------------"
 echo " Install/upgrade Ansible on master...                                           "
 echo "--------------------------------------------------------------------------------"
-sudo -H pip install --no-cache-dir  --upgrade --requirement "${DIR}/python_requirements"
+#sudo -H pip install --no-cache-dir --user --upgrade --requirement "${DIR}/python_requirements"
+${HOME}/.local/bin/pip3 install --no-cache-dir --user --upgrade --requirement "${DIR}/python_requirements"

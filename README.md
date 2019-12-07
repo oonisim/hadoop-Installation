@@ -41,12 +41,13 @@ Ansible playbooks and inventories under the Git repository.
 │   │       ├── ansible.cfg  <---- Configurations for all plays
 │   │       └── inventories  <---- Each environment has it inventory here
 │   │           ├── aws      <---- AWS/Spark environment inventory
+│   │           ├── local    <---- local environment inventory
 │   │           └── template
 │   └── tools
-├── master      <---- Spark master node data for run_Spark.s created by setup_aws.sh or update manally.
+├── master        <---- Spark master node data for run_Spark.s created by setup_aws.sh or update manally.
 ├── setup.sh      <---- Run setup_aws.sh and run_Spark.sh
 ├── setup_aws.sh  <---- Run AWS setups
-└── run_Spark.sh  <---- Run Spark setups
+└── run.sh        <---- Run setups
 ```
 
 #### Module and structure
@@ -69,14 +70,37 @@ Module is a set of playbooks and roles to execute a specific task e.g. 03_Spark_
 ```
 ---
 
-Preparations
-------------
+# Preparations
 
-### Git
+## Configurations (Ansible master)
+### Environment variables
 
-Clone this.
+Update hadoop_variables.sh and spark_variables.sh so that ./installation/_setup_env_cluster.sh setups the environment variables for the installation.
+```
+export $(cat ${DIR}/conf/ansible/inventories/${TARGET_INVENTORY}/env/hadoop/env/hadoop_variables.sh | grep -v '^#' | xargs)
+export $(cat ${DIR}/conf/ansible/inventories/${TARGET_INVENTORY}/env/spark/env/spark_variables.sh   | grep -v '^#' | xargs)
+```
 
-### For AWS
+AWS target creation creates the files and specify the location to save these files at runtime.
+
+### Hadoop 
+
+Update the configuration file to set:
+* HADOOP_VERSION
+* HADOOP_PACKAGE_CHECKSUM
+
+```
+installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/21.hadoop.yml
+```
+
+### SPARK
+
+* SPARK_VERSION
+* SPARK_PACKAGE_CHECKSUM
+* SPARK_SCALA_VERSION  
+Set to the Scala versoin used to compile the Spark package)
+
+## For AWS
 
 Have AWS access key_id, secret, and an AWS SSH keypair PEM file. MFA should not be used (or make sure to establish a session before execution).
 
@@ -173,8 +197,8 @@ Set **private** AWS DNS name and IP of the master node instance. If setup_aws.sh
 * MASTER_HOSTNAME
 * MASTER_NODE_IP
 
-#### SPARK_ADMIN and LINUX_USERS
-Set an account name to SPARK_ADMIN in server.yml. The account is created by a playbook via LINUX_USERS in server.yml. Set an encrypted password in the corresponding field. Use [mkpasswd as explained in Ansible document](http://docs.ansible.com/ansible/latest/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module).
+#### SPARK_ADMIN and HADOOP_USERS
+Set an account name to SPARK_ADMIN in server.yml. The account is created by a playbook via HADOOP_USERS in server.yml. Set an encrypted password in the corresponding field. Use [mkpasswd as explained in Ansible document](http://docs.ansible.com/ansible/latest/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module).
 
 
 Executions
@@ -234,3 +258,51 @@ Modules are:
 ```
 
 
+---
+
+# Hadoop configurations
+
+## mapreduce-site.xml
+```aidl
+<configuration>
+    <property>
+      <name>mapreduce.framework.name</name>
+      <value>yarn</value>
+    </property>
+    <property>
+        <name>mapreduce.map.memory.mb</name>
+        <value>{{ YARN_MR_MAP_MEMORY_MB }}</value>
+    </property>
+    <property>
+        <name>mapreduce.map.java.opts</name>
+        <value>{{ YARN_MR_MAP_JAVA_OPTS }}</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.memory.mb</name>
+        <value>{{ YARN_MR_REDUCE_MEMORY_MB }}</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.java.opts</name>
+        <value>{{ YARN_MR_REDUCE_JAVA_OPTS }}</value>
+    </property>
+
+   <!--
+  Without below, Error: Could not find or load main class org.apache.hadoop.mapreduce.v2.app.MRAppMaster .
+  See https://stackoverflow.com/questions/50927577/could-not-find-or-load-main-class-org-apache-hadoop-mapreduce-v2-app-mrappmaster as well.
+   -->
+    <property>
+      <name>yarn.app.mapreduce.am.env</name>
+      <value>HADOOP_MAPRED_HOME={{ HADOOP_HOME }}</value>
+    </property>
+    <property>
+      <name>mapreduce.map.env</name>
+      <value>HADOOP_MAPRED_HOME={{ HADOOP_HOME }}</value>
+    </property>
+    <property>
+      <name>mapreduce.reduce.env</name>
+      <value>HADOOP_MAPRED_HOME={{ HADOOP_HOME }}</value>
+    </property>
+
+</configuration>
+
+```

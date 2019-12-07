@@ -6,12 +6,22 @@
 
 # Need to change to correctly set ulimits. Below seems not working
 # Need to change to correctly set ulimits. Below seems not working
-- name: "Enable pod network traffic procssing in iptables."
+- name: "ulimit for {{ HADOOP_ADMIN }}"
   shell:
     cmd: |
       sudo tee /etc/sysctl.d/hdfs.conf <<EOF
-      soft nofile 8192
-      hard nofile 8192
+      @{{ HADOOP_ADMIN | quote }}          soft    nofile          10000
+      @{{ HADOOP_ADMIN | quote }}          hard    nofile          10000
+      EOF
+
+- name: "ulimit for {{ SPARK_ADMIN }}"
+  shell:
+    cmd: |
+      sudo tee /etc/sysctl.d/hdfs.conf <<EOF
+      @{{ SPARK_ADMIN | quote }}           soft    nofile          10000
+      @{{ SPARK_ADMIN | quote }}           hard    nofile          10000
+      @{{ SPARK_ADMIN | quote }}           soft    nproc           8096
+      @{{ SPARK_ADMIN | quote }}           hard    nofile          8096
       EOF
 
 - name: Reload sysctl

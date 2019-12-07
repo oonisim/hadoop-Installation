@@ -4,7 +4,8 @@
   shell: |
     {{ HADOOP_HOME }}/sbin/stop-dfs.sh
   environment: 
-    JAVA_HOME: "{{ java_home.stdout }}"    
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_HOME: "{{ HADOOP_HOME }}"
   ignore_errors: true
 
 - name: "Stop YARN"
@@ -13,7 +14,8 @@
   shell: |
     {{ HADOOP_HOME }}/sbin/stop-yarn.sh
   environment: 
-    JAVA_HOME: "{{ java_home.stdout }}"    
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_HOME: "{{ HADOOP_HOME }}"
   ignore_errors: true
 
 - name: "Wait cluster to stop"

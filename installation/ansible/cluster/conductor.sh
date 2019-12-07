@@ -25,10 +25,12 @@ ARGS=$@
 
 . ${PLAY_DIR}/../scripts/_utility.sh
 
-#CONF_DIR=$(_locate ${DIR} '/' 'cluster/conf')
-#TOOL_DIR=$(_locate ${DIR} '/' 'cluster/tools')
-CONF_DIR="${INSTALL_HOME:?"Set INSTALL_HOME"}/conf"
-TOOL_DIR="${INSTALL_HOME:?"Set INSTALL_HOME"}/tools"
+#CONF_DIR="${INSTALL_HOME:?"Set INSTALL_HOME"}/conf"
+#TOOL_DIR="${INSTALL_HOME:?"Set INSTALL_HOME"}/tools"
+
+CONF_DIR=$(_locate ${DIR} '/' 'conf/ansible')
+TOOL_DIR=$(_locate ${DIR} '/' 'tools')
+
 
 PLAYER=$(realpath "$(dirname $0)")/player.sh
 
@@ -43,11 +45,10 @@ cd ${PLAY_DIR}
 rm -rf \
     ${PLAY_DIR}/{callbacks,group_vars,ansible.cfg,hosts}
 
-cp -r  ${CONF_DIR}/ansible/inventories/${ENVIRONMENT}/inventory hosts
-ln -sf ${CONF_DIR}/ansible/inventories/${ENVIRONMENT}/group_vars
-ln -sf ${CONF_DIR}/ansible/ansible.cfg
-ln -sf ${CONF_DIR}/ansible/callbacks
-
+cp -r  ${CONF_DIR}/inventories/${ENVIRONMENT}/inventory hosts
+ln -sf ${CONF_DIR}/inventories/${ENVIRONMENT}/group_vars
+ln -sf ${CONF_DIR}/ansible.cfg
+ln -sf ${CONF_DIR}/callbacks
 
 
 #--------------------------------------------------------------------------------

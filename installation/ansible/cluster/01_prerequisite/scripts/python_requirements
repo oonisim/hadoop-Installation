@@ -2,9 +2,16 @@
 PyYAML
 Jinja2
 httplib2
+# --------------------------------------------------------------------------------
+# To avoid ImportError: No module named DistUtilsExtra.command, use package manager
+# https://askubuntu.com/questions/584857/distutilsextra-problem
+# --------------------------------------------------------------------------------
+#python-apt
+# --------------------------------------------------------------------------------
 
 # Ansible
-ansible==2.3.0
+#ansible==2.7.1
+ansible==2.9.2
 
 #Other packages
 boto

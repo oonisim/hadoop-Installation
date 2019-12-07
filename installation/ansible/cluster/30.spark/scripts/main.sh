@@ -36,6 +36,8 @@ fi
 
 . ${DIR}/_utility.sh
 . ${DIR}/_pretask.sh
+. ${DIR}/_python.sh
+
 
 echo "#--------------------------------------------------------------------------------"
 echo "# starting ansible playbook (it may take a while in case of EC2)..."

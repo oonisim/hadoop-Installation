@@ -5,7 +5,8 @@
     {{ SPARK_HOME }}/sbin/stop-all.sh
     {{ SPARK_HOME }}/sbin/stop-history-server.sh
   environment: 
-    JAVA_HOME: "{{ java_home.stdout }}"    
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_HOME: "{{ HADOOP_HOME }}"
   ignore_errors: true
 
 - name: "Start cluster"
@@ -14,7 +15,8 @@
   shell: |
     {{ SPARK_HOME }}/sbin/start-all.sh
   environment: 
-    JAVA_HOME: "{{ java_home.stdout }}"    
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_HOME: "{{ HADOOP_HOME }}"
 
 #--------------------------------------------------------------------------------        
 # Need to create /tmp/spark-events to start history server otherwise it fails.
@@ -28,4 +30,5 @@
     mkdir -p /tmp/spark-events
     {{ SPARK_HOME }}/sbin/start-history-server.sh
   environment: 
-    JAVA_HOME: "{{ java_home.stdout }}"    
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_HOME: "{{ HADOOP_HOME }}"

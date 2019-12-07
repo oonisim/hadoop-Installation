@@ -1,0 +1,61 @@
+#--------------------------------------------------------------------------------
+# Administration account
+#--------------------------------------------------------------------------------
+SPARK_ADMIN : spark
+SPARK_GROUP: spark
+
+#--------------------------------------------------------------------------------
+# Spark installation package.
+#--------------------------------------------------------------------------------
+# [Spark 2.3]
+# https://spark.apache.org/docs/2.3.0/
+# Scala version for Spark 
+# (NOT to compile scala programs nor for sbt)
+# For the Scala API, Spark 2.3.0 uses Scala 2.11. Need compatible Scala (2.11.x).
+#--------------------------------------------------------------------------------
+SPARK_VERSION: 2.4.4
+SPARK_SCALA_VERSION: 2.11
+SPARK_PACKAGE: "spark-{{ SPARK_VERSION }}-bin-hadoop2.7.tgz"
+SPARK_DOWNLOAD_URL: "http://apache.melbourneitmirror.net/spark/spark-{{ SPARK_VERSION }}/{{ SPARK_PACKAGE }}"
+SPARK_PACKAGE_CHECKSUM: "sha512:2E3A5C853B9F28C7D4525C0ADCB0D971B73AD47D5CCE138C85335B9F53A6519540D3923CB0B5CEE41E386E49AE8A409A51AB7194BA11A254E037A848D0C4A9E5:AF45EEB06DC1BEEE6D4C70B92C0E0237"
+
+#--------------------------------------------------------------------------------
+# Home
+#--------------------------------------------------------------------------------
+SPARK_DOWNLOAD_DIR: "~{{ SPARK_ADMIN }}/downloads"
+SPARK_HOME: "/opt/spark/spark-{{ SPARK_VERSION }}"
+
+SPARK_URL: "http://localhost:8080"
+SPARK_LOG_DIR: /logs_spark
+
+SPARK_EXAMPLE_JAR: "spark-examples_{{ SPARK_SCALA_VERSION }}-{{ SPARK_VERSION }}.jar" 
+
+#--------------------------------------------------------------------------------
+# Nodes
+#--------------------------------------------------------------------------------
+SPARK_WORKERS: "{{ lookup('env','SPARK_WORKERS') }}" 
+SPARK_MASTER_HOSTNAME: "{{ lookup('env','SPARK_MASTER_HOSTNAME') }}" 
+SPARK_MASTER_PORT: 7077
+
+#--------------------------------------------------------------------------------
+# Spark master
+#--------------------------------------------------------------------------------
+#SPARK_MASTER: "spark://{{ SPARK_MASTER_HOSTNAME }}:{{ SPARK_MASTER_PORT }}"
+SPARK_MASTER: "yarn"
+
+#--------------------------------------------------------------------------------
+# Mode
+#--------------------------------------------------------------------------------
+SPARK_DEPLOY_MODE: cluster
+
+#--------------------------------------------------------------------------------
+# Spark properties 
+#--------------------------------------------------------------------------------
+SPARK_DRIVER_MEMORY: 2g
+# spark.hadoop.validateOutputSpecs (see https://stackoverflow.com/questions/27033823 too)
+# If set to true, validates the output specification (e.g. checking if the output 
+# directory already exists) used in saveAsHadoopFile and other variants.
+#
+# Spark re-run if an executor fails, which can cause file already exits error.
+# This flag turns off the check if the file/directory already exits.
+SPARK_HADOOP_VALIDATEOUTPUTSPECS: true
