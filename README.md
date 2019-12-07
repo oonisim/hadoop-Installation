@@ -144,8 +144,9 @@ Create a Datadog trial account and set the environment variable DATADOG_API_KEY 
 Set environment (or shell) variable TARGET_INVENTORY=aws. The variable identifies the Ansible inventory **aws**  (same with ENV_ID in env.yml) to use.
 
 ---
+
 # Run
-Run ./setup.sh to run all at once (create AWS IAM policy/role, VPC, subnet, router, SG, EC2, ..., setup Spark cluster and applications)  or go through the configurations and executions step by step below.
+Run ./setup.sh to run all at once (create AWS environment, setup Hadoop/Spark cluster and test an application) or go through the configurations and executions step by step below.
 
 ## Configurations
 
@@ -224,14 +225,13 @@ Set TARGET_INVENTORY=aws variable which identifies the Ansible inventory **aws**
 └── setup_cluster.sh
 ```
 
-### Spark
+### Hadoop + Spark
 In the directory, run run_Spark.sh. If DATADOG_API_KEY is not set, the 51_datadog module will cause errors.
 
 ```
 .
 ├── cluster
 ├── maintenance.sh
-├── master       <---- Make sure master node information is set in this file
 ├── setup.sh
 ├── setup_aws.sh
 └── setup_cluster.sh   <---- Run this script
@@ -247,8 +247,11 @@ Modules are:
 ```
 ├── 01_prerequisite      <---- Module to setup Ansible pre-requisites
 ├── 02_os                <---- Module to setup OS to install Spark
-├── 03_Spark_setup         <---- Module to setup Spark cluster
-├── 51_datadog           <---- Module to setup datadog monitoring (option)
+├── 03_packages          <---- Module to setup OS to install Spark
+├── 20_hadoop            <---- Module to setup Spark cluster
+├── 30_spark             <---- Module to setup Spark cluster
+├── 40_application       <---- Module to run Spark applications
+├── 50_datadog           <---- Module to setup datadog monitoring (option)
 ├── conductor.sh         <---- Script to conduct playbook executions
 └── player.sh            <---- Playbook player
 ```
