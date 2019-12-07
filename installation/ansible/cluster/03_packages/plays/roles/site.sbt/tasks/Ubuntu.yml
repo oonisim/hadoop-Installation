@@ -1,0 +1,19 @@
+- name: Add an SBT apt key by id from a keyserver
+  apt_key:
+    keyserver: "{{ apt_key_server_sbt }}"
+    id: "{{ apt_key_sbt }}"
+
+- name: Add the SBT repository to source list
+  apt_repository:
+    repo: "{{ apt_repository_sbt }}"
+    state: present
+
+- name: Install SBT
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ sbt_packages }}"
+
+# Take too long
+#- name: Verify SBT
+#  command: "sbt about"

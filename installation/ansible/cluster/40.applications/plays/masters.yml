@@ -2,7 +2,7 @@
   hosts: masters
   any_errors_fatal: true
   become: yes
-  become_user: root
+  become_user: "{{ SPARK_ADMIN }}"
   become_method: sudo
   roles:
     - naive_bayes

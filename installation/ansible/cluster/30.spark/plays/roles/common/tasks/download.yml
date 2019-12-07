@@ -1,0 +1,28 @@
+#--------------------------------------------------------------------------------
+# Install Packages
+#--------------------------------------------------------------------------------
+- name: "Create/recreate {{ SPARK_DOWNLOAD_DIR }}"
+  file:
+    path:   "{{ SPARK_DOWNLOAD_DIR }}"
+    state:  "directory"
+    owner:  "{{ SPARK_ADMIN }}"
+    group:  "{{ SPARK_GROUP }}"
+    mode:   0770
+
+- name: "Set owner/group as {{ SPARK_ADMIN }}:{{ SPARK_GROUP }} recursively {{ SPARK_HOME }}"
+  file:
+    path:   "{{ SPARK_HOME }}"
+    state:  "directory"
+    owner:  "{{ SPARK_ADMIN }}"
+    group:  "{{ SPARK_GROUP }}"
+    recurse: true
+
+- name: "Download {{ SPARK_DOWNLOAD_URL }}"
+  get_url:
+    url:   "{{ SPARK_DOWNLOAD_URL }}"
+    dest:  "{{ SPARK_DOWNLOAD_DIR }}/{{ SPARK_PACKAGE }}"
+    owner: "{{ SPARK_ADMIN }}"
+    group: "{{ SPARK_GROUP }}"
+    mode:  0770
+    #checksum: "{{ SPARK_PACKAGE_CHECKSUM }}"
+

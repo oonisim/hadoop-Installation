@@ -7,4 +7,5 @@
   roles:
     - site.common
     - site.java
+    - site.sbt    # Required to compile application programs, e.g. naive bayes.
 

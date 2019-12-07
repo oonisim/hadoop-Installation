@@ -1,9 +1,10 @@
 #--------------------------------------------------------------------------------
 # Run samples
+# For Spark/Yarn, HADOOP_CONF_DIR with configurations are required.
 #--------------------------------------------------------------------------------
 - name: "Run Pi"
   become: true
-  become_user: "{{ HADOOP_ADMIN }}"
+  become_user: "{{ SPARK_ADMIN }}"
   shell: |
     {{ SPARK_HOME}}/bin/spark-submit --class org.apache.spark.examples.SparkPi \
       {{ SPARK_HOME}}/examples/jars/{{ SPARK_EXAMPLE_JAR }} 10 \

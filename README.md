@@ -1,4 +1,4 @@
-Spark/Hadoop cluster deployment using Ansible
+Spark/Hadoop YARN cluster deployment using Ansible
 =========
 
 Approach
@@ -143,15 +143,11 @@ Create a Datadog trial account and set the environment variable DATADOG_API_KEY 
 
 Set environment (or shell) variable TARGET_INVENTORY=aws. The variable identifies the Ansible inventory **aws**  (same with ENV_ID in env.yml) to use.
 
-Let's try
-------------
-
+---
+# Run
 Run ./setup.sh to run all at once (create AWS IAM policy/role, VPC, subnet, router, SG, EC2, ..., setup Spark cluster and applications)  or go through the configurations and executions step by step below.
 
----
-
-Configurations
-------------
+## Configurations
 
 ### Parameters
 
@@ -260,9 +256,11 @@ Modules are:
 
 ---
 
-# Hadoop configurations
+# Hadoop 
 
-## mapreduce-site.xml
+## configurations
+
+### mapreduce-site.xml
 ```aidl
 <configuration>
     <property>
@@ -306,3 +304,12 @@ Modules are:
 </configuration>
 
 ```
+
+# Spark
+## Configurations
+
+Hadoop configuration files are required for Spark to access Hadoop/Yarn. Set the environment variables referring to the Hadoop/Yarn configuration directories.
+
+* HADOOP_CONF_DIR
+* YARN_CONF_DIR
+
