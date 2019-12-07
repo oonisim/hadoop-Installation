@@ -19,10 +19,10 @@
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   # The first line is a header    
-  shell: | 
-    hdfs dfs -mkdir -p {{ SPARK_LOG_DIR }}
-    hdfs dfs -chown -R {{ SPARK_ADMIN }}:{{ HADOOP_GROUP }} {{ SPARK_LOG_DIR }}
-    hdfs dfs -chmod -R ug+rwx {{ SPARK_LOG_DIR }}
+  shell: |
+    hadoop fs -mkdir -p {{ SPARK_LOG_DIR }}
+    hadoop fs -chown -R {{ SPARK_ADMIN }}:{{ HADOOP_GROUP }} {{ SPARK_LOG_DIR }}
+    hadoop fs -chmod -R ugo+rwx {{ SPARK_LOG_DIR }}
   environment: 
     PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"
