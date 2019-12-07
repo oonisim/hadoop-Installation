@@ -261,6 +261,18 @@ Modules are:
 
 # Hadoop 
 
+## Environment variables
+
+To propagate environment variables, place /etc/profile.d/.
+For Ubuntu, update bash.bashrc.
+* [Scripts in /etc/profile.d Being Ignored?](https://askubuntu.com/questions/438150/scripts-in-etc-profile-d-being-ignored/438170)
+
+See:
+```
+installation/ansible/cluster/20_hadoop/plays/roles/common/tasks/bash.yml
+installation/ansible/cluster/20_hadoop/plays/roles/common/templates/profile.d/hadoop.sh.j2
+```
+
 ## configurations
 
 ### mapreduce-site.xml
