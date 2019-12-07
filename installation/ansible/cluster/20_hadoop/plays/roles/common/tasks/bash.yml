@@ -1,0 +1,15 @@
+- name: Insert/Update "profile.d sourcing" configuration block in /etc/bash.bashrc
+  blockinfile:
+    path: /etc/bash.bashrc
+    marker: "#{mark} ANSIBLE MANAGED BLOCK"
+    backup: yes
+    block: |
+        if [ -d /etc/profile.d ]; then
+          for i in /etc/profile.d/*.sh; do
+            if [ -r $i ]; then
+              . $i
+            fi
+          done
+          unset i
+        fi
+    insertafter: EOF

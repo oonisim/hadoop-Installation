@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -u
 if [ ! -n "${DIR+1}" ] ; then
     DIR=$(realpath $(dirname .))
 fi

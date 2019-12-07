@@ -1,4 +1,4 @@
-#- import_tasks: cleanup.yml
+- import_tasks: cleanup.yml
 - import_tasks: download.yml
 - import_tasks: install.yml
 - import_tasks: spark.yml
