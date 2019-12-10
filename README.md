@@ -17,30 +17,32 @@ Repository Structure
 
 ### Overview
 
-Ansible playbooks and inventories under the Git repository.
+Ansible playbooks and inventories. To install in AWS, use aws inventory, or use local for local PC installation.
 
 ```
 .
-├── cluster         <---- Spark cluster installation home (AWS+Spark)
+├── installation    <---- Hadoop+Spark cluster installation home (on AWS or local)
 │   ├── ansible     <---- Ansible playbook directory
 │   │   ├── aws
-│   │   │   ├── ec2
-│   │   │   │   ├── creation         <---- Module to setup AWS
-│   │   │   │   └── operations
+│   │   │   ├── creation             <---- Module to create AWS environment
+│   │   │   ├── operations
 │   │   │   ├── conductor.sh
 │   │   │   └── player.sh
-│   │   └── spark
+│   │   └── cluster
 │   │       ├── 01_prerequisite      <---- Module to setup Ansible pre-requisites
 │   │       ├── 02_os                <---- Module to setup OS to install Spark
-│   │       ├── 21_spark       <---- Module to setup Spark cluster
-│   │       ├── 51_datadog           <---- Module to setup datadog monitoring (option)
+│   │       ├── 02_packages          <---- Module to setup software packages
+│   │       ├── 20_hadoop            <---- Module to setup Hadoop/YARN cluster
+│   │       ├── 30_spark             <---- Module to setup Spark cluster
+│   │       ├── 40_spark             <---- Module to run Spark applications (naive bayes, etc)
+│   │       ├── 510datadog           <---- Module to setup datadog monitoring (option)
 │   │       ├── conductor.sh         <---- Script to conduct playbook executions
-│   │       └── player.sh            <---- Playbook player
+│   │       └── player.sh            <---- Playbook player (to be used to decrypt Ansible vault key)
 │   ├── conf
 │   │   └── ansible          <---- Ansible configuration directory
 │   │       ├── ansible.cfg  <---- Configurations for all plays
 │   │       └── inventories  <---- Each environment has it inventory here
-│   │           ├── aws      <---- AWS/Spark environment inventory
+│   │           ├── aws      <---- AWS environment inventory
 │   │           ├── local    <---- local environment inventory
 │   │           └── template
 │   └── tools
@@ -52,16 +54,15 @@ Ansible playbooks and inventories under the Git repository.
 
 #### Module and structure
 
-Module is a set of playbooks and roles to execute a specific task e.g. 03_Spark_setup is to setup a Spark cluster. Each module directory has the same structure having Readme, Plays, and Scripts.
+Module is a set of playbooks to execute a specific task e.g. 30_spark is to setup a Spark cluster. Each module directory has the same structure having plays and scripts.
 ```
-03_Spark_setup/
-├── Readme.md         <---- description of the module
+30_spark/
+├── Readme.md         <---- (option) description of the module
 ├── plays
 │   ├── roles
-│   │   ├── common    <---- Common tasks both for master and workers
+│   │   ├── common    <---- Common tasks for both master and workers
 │   │   ├── master    <---- Setup master node
-│   │   ├── user      <---- Setup Spark administrative users on master
-│   │   ├── worker    <---- Setup worker nodes
+│   │   └── worker    <---- Setup worker nodes
 │   ├── site.yml
 │   ├── masters.yml   <--- playbook for master node
 │   └── workers.yml   <--- playbook for worker nodes
@@ -70,9 +71,58 @@ Module is a set of playbooks and roles to execute a specific task e.g. 03_Spark_
 ```
 ---
 
-# Preparations
+# Prerequisite
 
-## Configurations (Ansible master)
+Python and Pip. Some Python packages would require installations using the Linux distribution package manager.
+
+# AWS
+
+To create an AWS environment to deploy Hadoop + Spark.
+
+## Ansible master
+
+### AWS CLI
+Prepare EC2 keypair, install AWS CLI (use --user) and set the environment variables. Make sure to set ~/.local/bin to PATH to use local python site.
+
+* AWS_ACCESS_KEY_ID
+* AWS_SECRET_ACCESS_KEY
+* EC2_KEYPAIR_NAME         <---- AWS SSH keypair name
+* REMOTE_USER              <---- AWS EC2 user (centos for CentOs, ec2-user for RHEL)
+
+### Ansible
+Install the latest Ansible and Boto (botocore + boto3) with pip (--user). If the host is RHEL/CentOS/Ubuntu, run below will setup Ansible.
+
+```
+(cd ./installation/ansible/cluster/01_prerequisite/scripts && ./setup.sh)
+```
+
+Test the Ansible AWS dynamic inventory script. Make sure to have the [latest script](https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.py). 
+```
+installation/conf/ansible/inventories/aws/inventory/ec2.py
+```
+
+### SSH
+Configure ssh-agent and/or .ssh/config with the AWS SSH PEM to be able to SSH into the targets without providing pass phrase. Create a test EC2 instance and test.
+
+```
+eval $(ssh-agent)
+ssh-add <AWS SSH pem>
+ssh ${REMOTE_USER}@<EC2 server> sudo ls  # no prompt for asking password
+```
+
+## Execution
+
+Run below and it will ask for the location to save the auto-generated files.
+
+```aidl
+installation/setup_aws.sh
+```
+
+---
+
+# Hadoop/YARN & Spark
+
+## Ansible master
 ### Environment variables
 
 Update hadoop_variables.sh and spark_variables.sh so that ./installation/_setup_env_cluster.sh setups the environment variables for the installation.
@@ -81,76 +131,13 @@ export $(cat ${DIR}/conf/ansible/inventories/${TARGET_INVENTORY}/env/hadoop/env/
 export $(cat ${DIR}/conf/ansible/inventories/${TARGET_INVENTORY}/env/spark/env/spark_variables.sh   | grep -v '^#' | xargs)
 ```
 
-AWS target creation creates the files and specify the location to save these files at runtime.
+#### REMOTE_USER
+Update REMOTE_USER with the Linux account name to SSH login into the Ansible targets who can sudo without password as the Ansible remote_user to run the playbooks.
 
-### Hadoop 
+#### TARGET_INVENTORY
+Update TARGET_INVENTORY with the inventory name with the Ansible inventory name.
 
-Update the configuration file to set:
-* HADOOP_VERSION
-* HADOOP_PACKAGE_CHECKSUM
-
-```
-installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/21.hadoop.yml
-```
-
-### SPARK
-
-* SPARK_VERSION
-* SPARK_PACKAGE_CHECKSUM
-* SPARK_SCALA_VERSION  
-Set to the Scala versoin used to compile the Spark package)
-
-## For AWS
-
-Have AWS access key_id, secret, and an AWS SSH keypair PEM file. MFA should not be used (or make sure to establish a session before execution).
-
-### On Ansible master host
-
-#### AWS CLI
-Install AWS CLI and set the environment variables.
-
-* AWS_ACCESS_KEY_ID
-* AWS_SECRET_ACCESS_KEY
-* EC2_KEYPAIR_NAME
-* REMOTE_USER        <---- AWS EC2 user (centos for CentOs, ec2-user for RHEL)
-
-#### Ansible
-Have Ansible (2.4.1 or later) and Boto to be able to run AWS ansible features. If the host is RHEL/CentOS/Ubuntu, run below will do the job.
-
-```
-(cd ./cluster/ansible/Spark/01_prerequisite/scripts && ./setup.sh)
-```
-
-Test the Ansible dynamic inventory script.
-```
-conf/ansible/inventories/aws/inventory/ec2.py
-```
-
-#### SSH
-Configure ssh-agent and/or .ssh/config with the AWS SSH PEM to be able to SSH into the targets without providing pass phrase. Create a test EC2 instance and test.
-
-```
-eval $(ssh-agent)
-ssh-add <AWS SSH pem>
-ssh ${REMOTE_USER}@<EC2 server> sudo ls  # no prompt for asking password
-
-```
-
-#### Datadog (optional)
-Create a Datadog trial account and set the environment variable DATADOG_API_KEY to the [Datadog account API_KEY](https://app.datadoghq.com/account/settings#api). The Datadog module setups the monitors/metrics to verify that Spark is up and running, and can start monitoring and setup alerts right away.
-
-#### Ansible inventory
-
-Set environment (or shell) variable TARGET_INVENTORY=aws. The variable identifies the Ansible inventory **aws**  (same with ENV_ID in env.yml) to use.
-
----
-
-# Run
-Run ./setup.sh to run all at once (create AWS environment, setup Hadoop/Spark cluster and test an application) or go through the configurations and executions step by step below.
-
-## Configurations
-
-### Parameters
+### Configuration parameters
 
 Parameters for an environment are all isolated in group_vars of the environment inventory. Go through the group_vars files to set values.
 
@@ -176,17 +163,28 @@ Parameters for an environment are all isolated in group_vars of the environment 
 │                   └── hosts           <---- Target node(s) using tag values (set upon creating AWS env)
 ├── tools   <----- TOOL_DIR environment variable 
 ```
+#### Hadoop 
 
-#### EC2_KEYPAIR_NAME
+Update the installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/21.hadoop.yml for:
 
-Set the AWS SSH keypair nameto **EC2_KEYPAIR_NAME** enviornment variable and in aws.yml.
+* HADOOP_VERSION
+* HADOOP_PACKAGE_CHECKSUM
 
-#### REMOTE_USER
-Set the default Linux account (centos for CentOS EC2) that can sudo without password as the Ansible remote_user to run the playbooks If using another account, configure it and make sure it can sudo without password and configure .ssh/config.
+```
+installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/21.hadoop.yml
+```
 
-#### ENV_ID
+#### SPARK
+Update the installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/31.spark.yml for:
 
-Set the inventory name _aws_ to ENV_ID in env.yml which is used to tag the configuration items in AWS (e.g. EC2). The tags are then used to identify configuration items that belong to the enviornment, e.g. EC2 dynamic inventory hosts.
+* SPARK_VERSION
+* SPARK_PACKAGE_CHECKSUM
+* SPARK_SCALA_VERSION     <---- Scala versoin used to compile the Spark package
+
+#### Datadog (optional & AWS only)
+
+Create a Datadog trial account and set the environment variable DATADOG_API_KEY to the [Datadog account API_KEY](https://app.datadoghq.com/account/settings#api). The Datadog module setups the monitors/metrics to verify that Spark is up and running, and can start monitoring and setup alerts right away.
+Update installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/51.datadog.yml for other parameters.
 
 #### Master node information
 Set **private** AWS DNS name and IP of the master node instance. If setup_aws.sh is used, it creates a file **master** which includes them and run_Spark.sh uses them. Otherwise set them in env.yml and as environment variables after having created the AWS instances.
@@ -203,27 +201,13 @@ Executions
 Make sure the environment variables are set.
 
 Environment variables:
-* AWS_ACCESS_KEY_ID
-* AWS_SECRET_ACCESS_KEY
-* EC2_KEYPAIR_NAME
+* TARGET_INVENTORY
 * REMOTE_USER
-* DATADOG_API_KEY
-* CONF_DIR  <--- configuration folder
-* TOOL_DIR  <--- tools folder
+* AWS_ACCESS_KEY_ID       (for AWS only)
+* AWS_SECRET_ACCESS_KEY   (for AWS only)
+* EC2_KEYPAIR_NAME        (for AWS only)
+* DATADOG_API_KEY         (for AWS only)
 
-Set TARGET_INVENTORY=aws variable which identifies the Ansible inventory **aws**  (same with ENV_ID) to use.
-
-### AWS
-
-```
-.
-├── cluster
-├── maintenance.sh
-├── master
-├── setup.sh
-├── setup_aws.sh   <--- Run this script.
-└── setup_cluster.sh
-```
 
 ### Hadoop + Spark
 In the directory, run run_Spark.sh. If DATADOG_API_KEY is not set, the 51_datadog module will cause errors.
