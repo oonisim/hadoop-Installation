@@ -25,10 +25,7 @@ SPARK_PACKAGE_CHECKSUM: "sha512:2E3A5C853B9F28C7D4525C0ADCB0D971B73AD47D5CCE138C
 SPARK_DOWNLOAD_DIR: "~{{ SPARK_ADMIN }}/downloads"
 SPARK_HOME: "/opt/spark/spark-{{ SPARK_VERSION }}"
 
-SPARK_URL: "http://localhost:8080"
-SPARK_LOG_DIR: /logs_spark
-
-SPARK_EXAMPLE_JAR: "spark-examples_{{ SPARK_SCALA_VERSION }}-{{ SPARK_VERSION }}.jar" 
+SPARK_EXAMPLE_JAR: "spark-examples_{{ SPARK_SCALA_VERSION }}-{{ SPARK_VERSION }}.jar"
 
 #--------------------------------------------------------------------------------
 # Nodes
@@ -38,13 +35,24 @@ SPARK_MASTER_HOSTNAME: "{{ lookup('env','SPARK_MASTER_HOSTNAME') }}"
 SPARK_MASTER_PORT: 7077
 
 #--------------------------------------------------------------------------------
+# Spark logging
+#--------------------------------------------------------------------------------
+SPARK_LOG_DIR: /logs_spark
+
+#--------------------------------------------------------------------------------
+# Spark UI
+#--------------------------------------------------------------------------------
+SPARK_UI_PORT: 8088
+SPARK_URL: "http://{{ SPARK_MASTER_HOSTNAME }}:{{ SPARK_UI_PORT }}"
+
+#--------------------------------------------------------------------------------
 # Spark master
 #--------------------------------------------------------------------------------
 #SPARK_MASTER: "spark://{{ SPARK_MASTER_HOSTNAME }}:{{ SPARK_MASTER_PORT }}"
 SPARK_MASTER: "yarn"
 
 #--------------------------------------------------------------------------------
-# Mode
+# Deployment mode
 #--------------------------------------------------------------------------------
 SPARK_DEPLOY_MODE: cluster
 

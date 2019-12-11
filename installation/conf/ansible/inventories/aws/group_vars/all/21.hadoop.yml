@@ -5,16 +5,19 @@
 # services e.g. Spark module can use those information to configure.
 # 
 # Those information is store in files under the manifest holder.
+#
+# 07DEC2019: Stop using HADOOP_ARTEFACT_DIR
+# If Hadoop information is required, get from hadoop/etc or runtime.
 #--------------------------------------------------------------------------------
-HADOOP_ARTEFACT_DIR: "{{ lookup('env','INSTALL_HOME') }}//artefacts/hadoop"
+#HADOOP_ARTEFACT_DIR: "{{ lookup('env','INSTALL_HOME') }}//artefacts/hadoop"
 
 #--------------------------------------------------------------------------------
 # Hadoop installation package
 #--------------------------------------------------------------------------------
-HADOOP_VERSION: 2.8.4
+HADOOP_VERSION: 3.2.0
 HADOOP_PACKAGE: "hadoop-{{ HADOOP_VERSION }}.tar.gz"
-HADOOP_DOWNLOAD_URL: "http://apache.mirror.amaze.com.au/hadoop/common/hadoop-{{ HADOOP_VERSION }}/{{ HADOOP_PACKAGE }}"
-HADOOP_PACKAGE_CHECKSUM: "md5:B30B409BB69185003B3BABD1504BA224"
+HADOOP_DOWNLOAD_URL: "https://archive.apache.org/dist/hadoop/common/hadoop-{{ HADOOP_VERSION }}/{{ HADOOP_PACKAGE }}"
+HADOOP_PACKAGE_CHECKSUM: "md5:5AC41982DC50C96C897C70758FC54CA3"
 HADOOP_DOWNLOAD_DIR: "~{{ HADOOP_ADMIN }}/downloads"
 
 #--------------------------------------------------------------------------------
@@ -22,11 +25,12 @@ HADOOP_DOWNLOAD_DIR: "~{{ HADOOP_ADMIN }}/downloads"
 #--------------------------------------------------------------------------------
 HADOOP_ADMIN : hadoop
 HADOOP_GROUP: hadoop
+HADOOP_ADMIN_PASSWD:
 
 #--------------------------------------------------------------------------------
 # Home
 #--------------------------------------------------------------------------------
-HADOOP_HOME: "/usr/local/hadoop"
+HADOOP_HOME: "/opt/hadoop/hadoop-{{ HADOOP_VERSION }}"
 HADOOP_CONF_DIR: "{{ HADOOP_HOME }}/etc/hadoop"
 
 #--------------------------------------------------------------------------------
@@ -48,8 +52,8 @@ HADOOP_WORKERS: "{{ lookup('env','HADOOP_WORKERS') }}"
 # HDFS configurations
 # https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml
 #--------------------------------------------------------------------------------
-HADOOP_DFS_REPLICATION: 2
-HADOOP_DFS_BLOCK_SIZE: 134217728
+HADOOP_DFS_REPLICATION: 1
+HADOOP_DFS_BLOCK_SIZE: 256m
 # io.file.buffer.size (Hadoop uses buffer size of 4KB by default for its I/O operations)
 # Can increase it to 128K in order to get good performance
 HADOOP_IO_FILE_BUFFER_SIZE: 131072

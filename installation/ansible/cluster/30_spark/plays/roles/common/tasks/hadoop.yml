@@ -6,7 +6,7 @@
 - debug:
     msg: "{{ _hadoop_conf_dir }}"
     
-- name: "Create {{ HADOOP_CONF_DIR }}"
+- name: "Create {{ HADOOP_CONF_DIR }} when not exists"
   when: SPARK_MASTER == "yarn" and not (_hadoop_conf_dir.stat.exists == true and _hadoop_conf_dir.stat.isdir == true)
   file: 
     path:   "{{ HADOOP_CONF_DIR }}"
@@ -15,10 +15,14 @@
     group:  "{{ SPARK_GROUP }}"
     mode:   0770
   
-- name: copy hadoop file for YARN integration
+- name: copy hadoop files for YARN integration when not exist
   when: SPARK_MASTER == "yarn" and not (_hadoop_conf_dir.stat.exists == true and _hadoop_conf_dir.stat.isdir == true)
   with_fileglob:
-    - "hadoop/*"
+    - "{{ role_path }}/templates/hadoop/*"
   copy: 
-    src:  "{{ item }}"
-    dest: "{{ HADOOP_CONF_DIR }}/{{ item | basename }}"
+    src:    "{{ item }}"
+    dest  : "{{ HADOOP_CONF_DIR }}/{{ item | basename | regex_replace('\\.j2','') }}"
+    owner : "{{ SPARK_ADMIN }}"
+    group : "{{ SPARK_GROUP }}"
+    mode  : 0664
+    backup: yes

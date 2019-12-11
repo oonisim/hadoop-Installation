@@ -3,8 +3,10 @@ Spark/Hadoop YARN cluster deployment using Ansible
 
 Approach
 ------------
-* Dependency should be injected. 
-* Separation of concerns - Each module must not know about the details of other modules.
+* Dependency should be injected  
+Use environment variables to specify the runtime nodes e.g. master node host. 
+
+* Separation of concerns - Each module must NOT know about the details of other modules.
 
 AWS Network Topology
 ------------
@@ -125,7 +127,19 @@ installation/setup_aws.sh
 ## Ansible master
 ### Environment variables
 
-Update hadoop_variables.sh and spark_variables.sh so that ./installation/_setup_env_cluster.sh setups the environment variables for the installation.
+Update hadoop_variables.sh and spark_variables.sh for the TARGET_INVENTORY. 
+
+```
+HADOOP_WORKERS
+HADOOP_NN_HOSTNAME
+YARN_RM_HOSTNAME
+SPARK_WORKERS
+SPARK_MASTER_HOSTNAME
+SPARK_MASTER_IP
+```
+
+The ./installation/_setup_env_cluster.sh exports the variables as environment variables.
+
 ```
 export $(cat ${DIR}/conf/ansible/inventories/${TARGET_INVENTORY}/env/hadoop/env/hadoop_variables.sh | grep -v '^#' | xargs)
 export $(cat ${DIR}/conf/ansible/inventories/${TARGET_INVENTORY}/env/spark/env/spark_variables.sh   | grep -v '^#' | xargs)
@@ -137,10 +151,9 @@ Update REMOTE_USER with the Linux account name to SSH login into the Ansible tar
 #### TARGET_INVENTORY
 Update TARGET_INVENTORY with the inventory name with the Ansible inventory name.
 
-### Configuration parameters
+### Configuration parameter files
 
-Parameters for an environment are all isolated in group_vars of the environment inventory. Go through the group_vars files to set values.
-
+Parameters for a TARGET_INVENTORY is isolated in group_vars for the inventory.
 ```
 .
 ├── conf    <----- CONF_DIR environment variable
@@ -180,24 +193,20 @@ Update the installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/
 * SPARK_VERSION
 * SPARK_PACKAGE_CHECKSUM
 * SPARK_SCALA_VERSION     <---- Scala versoin used to compile the Spark package
+* SPARK_MASTER            <---- Spark master e.g. local, yarn, etc.
+* SPARK_DEPLOY_MODE       <---- Spark deployment mode e.g. cluster or client.
+* SPARK_DRIVER_MEMORY     <---- Default Spark driver memory.
 
 #### Datadog (optional & AWS only)
 
 Create a Datadog trial account and set the environment variable DATADOG_API_KEY to the [Datadog account API_KEY](https://app.datadoghq.com/account/settings#api). The Datadog module setups the monitors/metrics to verify that Spark is up and running, and can start monitoring and setup alerts right away.
 Update installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/51.datadog.yml for other parameters.
 
-#### Master node information
-Set **private** AWS DNS name and IP of the master node instance. If setup_aws.sh is used, it creates a file **master** which includes them and run_Spark.sh uses them. Otherwise set them in env.yml and as environment variables after having created the AWS instances.
-
-* MASTER_HOSTNAME
-* MASTER_NODE_IP
-
 #### SPARK_ADMIN and HADOOP_USERS
 Set an account name to SPARK_ADMIN in server.yml. The account is created by a playbook via HADOOP_USERS in server.yml. Set an encrypted password in the corresponding field. Use [mkpasswd as explained in Ansible document](http://docs.ansible.com/ansible/latest/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module).
 
 
-Executions
-------------
+# Execution
 Make sure the environment variables are set.
 
 Environment variables:
@@ -210,7 +219,7 @@ Environment variables:
 
 
 ### Hadoop + Spark
-In the directory, run run_Spark.sh. If DATADOG_API_KEY is not set, the 51_datadog module will cause errors.
+Run ./installation/run_cluster.sh. If DATADOG_API_KEY is not set, the 51_datadog module will cause errors.
 
 ```
 .
@@ -242,13 +251,12 @@ Modules are:
 
 
 ---
+# Configuration details
+## Hadoop 
 
-# Hadoop 
+### Hadoop environment variables in runtime environment
 
-## Environment variables
-
-To propagate environment variables, place /etc/profile.d/.
-For Ubuntu, update bash.bashrc.
+To setup environment variables such as HADOOP_HOME, setup /etc/profile.d/hadoop.sh in each node. For Ubuntu, update /etc/bash.bashrc.
 * [Scripts in /etc/profile.d Being Ignored?](https://askubuntu.com/questions/438150/scripts-in-etc-profile-d-being-ignored/438170)
 
 See:
@@ -257,9 +265,10 @@ installation/ansible/cluster/20_hadoop/plays/roles/common/tasks/bash.yml
 installation/ansible/cluster/20_hadoop/plays/roles/common/templates/profile.d/hadoop.sh.j2
 ```
 
-## configurations
+### Hadoop configuration files
 
-### mapreduce-site.xml
+Setup files under ${HADOOP_HOME}/etc/hadoop by copying files under ./installation/ansible/cluster/20_hadoop/plays/roles/common/templates/etc via Ansible template replacing the variables.
+e.g. mapreduce-site.xml
 ```aidl
 <configuration>
     <property>
@@ -304,11 +313,29 @@ installation/ansible/cluster/20_hadoop/plays/roles/common/templates/profile.d/ha
 
 ```
 
-# Spark
-## Configurations
+## Spark
 
-Hadoop configuration files are required for Spark to access Hadoop/Yarn. Set the environment variables referring to the Hadoop/Yarn configuration directories.
+### Spark master
+Spark master is specified installation/ansible/cluster/30_spark/plays/roles/common/templates/conf/spark-defaults.conf.
 
-* HADOOP_CONF_DIR
-* YARN_CONF_DIR
 
+###  Hadoop configuration files
+Hadoop configuration files are required as in [Launching Spark on YARN](https://spark.apache.org/docs/latest/running-on-yarn.html#launching-spark-on-yarn) for Spark to access Hadoop/Yarn. The files are copied to the ${HADOOP_CONF_DIR} on the Spark nodes. See:
+```aidl
+installation/ansible/cluster/30_spark/plays/roles/common/tasks/hadoop.yml
+```
+
+### Spark environment variables
+Environment variables referring to the Hadoop/Yarn configuration directories in the Spark nodes are setup via the /etc/profile.d/spark.sh.
+``````
+HADOOP_CONF_DIR
+YARN_CONF_DIR
+```
+
+See:
+```
+installation/ansible/cluster/30_spark/plays/roles/common/templates/profile.d
+```
+
+
+installation/ansible/cluster/30_spark/plays/roles/common/templates/conf/spark-defaults.conf
