@@ -3,7 +3,7 @@
 - import_tasks: env.yml
 - import_tasks: download.yml
 - import_tasks: install.yml
-- import_tasks: bash_profile.yml
+- import_tasks: bash.yml
 
 # Not sure what this is for ...
 #- import_tasks: artefact.yml

@@ -320,14 +320,34 @@ Spark master is specified installation/ansible/cluster/30_spark/plays/roles/comm
 
 
 ###  Hadoop configuration files
-Hadoop configuration files are required as in [Launching Spark on YARN](https://spark.apache.org/docs/latest/running-on-yarn.html#launching-spark-on-yarn) for Spark to access Hadoop/Yarn. The files are copied to the ${HADOOP_CONF_DIR} on the Spark nodes. See:
+
+Hadoop configuration files are required as in [Launching Spark on YARN](https://spark.apache.org/docs/latest/running-on-yarn.html#launching-spark-on-yarn) for Spark to access Hadoop/Yarn. 
+
+See Spark Documentation - [Spark Configuration](https://spark.apache.org/docs/latest/configuration.html#inheriting-hadoop-cluster-configuration).
+>To read and write from HDFS using Spark, there are two Hadoop configuration files that should be included on Spark’s classpath:
+hdfs-site.xml, which provides default behaviors for the HDFS client.
+core-site.xml, which sets the default filesystem name.
+
+> To make these files visible to Spark, set HADOOP_CONF_DIR in $SPARK_HOME/conf/spark-env.sh to a location containing the configuration files.
+
+> Note that conf/spark-env.sh does not exist by default when Spark is installed. However, you can copy conf/spark-env.sh.template to create it. **Make sure you make the copy executable**.
+
+The files are copied to the ${HADOOP_CONF_DIR} on the Spark nodes. See:
+
 ```aidl
 installation/ansible/cluster/30_spark/plays/roles/common/tasks/hadoop.yml
 ```
 
-### Spark environment variables
+#### YARN configuration parameters
+
+See [Running Spark on YARN - Spark properties](http://spark.apache.org/docs/latest/running-on-yarn.html#spark-properties)
+
+#### Environment variables for Hadoop
 Environment variables referring to the Hadoop/Yarn configuration directories in the Spark nodes are setup via the /etc/profile.d/spark.sh.
-``````
+
+TODO: Move to ${SPARK_HOME}/conf/spark-env.sh
+
+```
 HADOOP_CONF_DIR
 YARN_CONF_DIR
 ```
@@ -337,5 +357,3 @@ See:
 installation/ansible/cluster/30_spark/plays/roles/common/templates/profile.d
 ```
 
-
-installation/ansible/cluster/30_spark/plays/roles/common/templates/conf/spark-defaults.conf

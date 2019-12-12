@@ -4,6 +4,6 @@
 #HADOOP_WORKERS='ip-10-0-0-153.us-west-1.compute.internal'
 #HADOOP_NN_HOSTNAME='ip-10-0-0-148.us-west-1.compute.internal'
 #YARN_RM_HOSTNAME='ip-10-0-0-148.us-west-1.compute.internal'
-HADOOP_WORKERS=localhost
-HADOOP_NN_HOSTNAME=localhost
-YARN_RM_HOSTNAME=localhost
+HADOOP_WORKERS=oonisim
+HADOOP_NN_HOSTNAME=oonisim
+YARN_RM_HOSTNAME=oonisim
