@@ -76,10 +76,10 @@ HADOOP_DFS_DATA_DIR: "/home/{{ HADOOP_ADMIN }}/dfs/data"
 YARN_RM_HOSTNAME:  "{{ lookup('env','YARN_RM_HOSTNAME') }}"
 # yarn.nodemanager.resource.cpu-vcores (The number of cores that a node manager can allocate to containers)
 # It should be set to the total number of cores on the machine, minus a core for each daemon process running on the machine (datanode, node manager, and any other long-running processes).
-YARN_NM_CPU_VCORES: 2
+YARN_NM_CPU_VCORES: 4
 # yarn.nodemanager.resource.memory-mb (Total amount of physical memory (RAM) for Containers on worker node.)
 # Set this property= Total RAM – (RAM for OS + Hadoop Daemons + Other services)
-YARN_NM_MEMORY_MB: 6144
+YARN_NM_MEMORY_MB: 12288
 # yarn.nodemanager.aux-services
 YARN_NM_AUX_SERVICES: mapreduce_shuffle
 # yarn.nodemanager.aux-services.mapreduce_shuffle.class

@@ -1,9 +1,9 @@
-- import_tasks: bash.yml
-- import_tasks: cleanup.yml
 - import_tasks: env.yml
+- import_tasks: cleanup.yml
 - import_tasks: download.yml
 - import_tasks: install.yml
 - import_tasks: bash.yml
 
-# Not sure what this is for ...
+# Disabled below as looked after at Spark palybook side
+# To export Hadoop configuration files to be copied to Spark nodes.
 #- import_tasks: artefact.yml

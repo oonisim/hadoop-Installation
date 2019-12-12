@@ -35,3 +35,15 @@
     JAVA_HOME: "{{ java_home.stdout }}"
     HADOOP_HOME: "{{ HADOOP_HOME }}"
 
+- name: "Create /tmp with owner {{ HADOOP_ADMIN }}:{{ HADOOP_GROUP }}."
+  become: true
+  become_user: "{{ HADOOP_ADMIN }}"
+  shell: |
+    {{ HADOOP_HOME }}/bin/hadoop fs -mkdir -p /tmp
+    {{ HADOOP_HOME }}/bin/hadoop fs -chmod 1777 /tmp
+    {{ HADOOP_HOME }}/bin/hadoop fs -chown {{ HADOOP_ADMIN }}:{{ HADOOP_GROUP }} /tmp
+  environment:
+    JAVA_HOME: "{{ java_home.stdout }}"
+    HADOOP_HOME: "{{ HADOOP_HOME }}"
+
+
