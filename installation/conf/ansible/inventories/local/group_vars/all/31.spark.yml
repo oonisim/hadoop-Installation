@@ -60,6 +60,14 @@ SPARK_DEPLOY_MODE: cluster
 # Spark properties 
 #--------------------------------------------------------------------------------
 SPARK_DRIVER_MEMORY: 2g
+
+# Dynamic resource allocation, which scales the number of executors registered
+# with this application up and down based on the workload.
+# This requires spark.shuffle.service.enabled to be set to true and you MUST
+# set up an external shuffle service on each worker node
+SPARK_DYNAMIC_ALLOCATION_ENABLED: false
+SPARK_SHUFFLE_SERVICE_ENABLED: false
+
 # spark.hadoop.validateOutputSpecs (see https://stackoverflow.com/questions/27033823 too)
 # If set to true, validates the output specification (e.g. checking if the output 
 # directory already exists) used in saveAsHadoopFile and other variants.
