@@ -1,16 +1,23 @@
 Spark/Hadoop YARN cluster deployment using Ansible
 =========
 
-Approach
-------------
+# Objective
+Setup Spark/Hadoop YARN cluster with Ansible in an environment (either AWS, on-premise, or local PC).
+
+### Approach
 * Dependency should be injected  
 Use environment variables to specify the runtime nodes e.g. master node host. 
 
 * Separation of concerns - Each module must NOT know about the details of other modules.
 
-AWS Network Topology
+### Prerequisite
+
+Ansible requires Python and pip both Ansible master and target nodes. Some Python packages would require installations using the Linux distribution package manager.
+
+
+Topology
 ------------
-Simple 1 master + 2 workers (can be increased by a parameter) in a VPC subnet, to be created by the Ansible playbooks.
+Simple 1 master + 2 workers (can be increased by a parameter) in a VPC subnet, to be created by the Ansible playbooks. The number of worker nodes can be configured.
 
 <img src="https://github.com/oonisim/Apache-Spark-Installation/blob/master/Images/AWS.png">
 
@@ -26,7 +33,7 @@ Ansible playbooks and inventories. To install in AWS, use aws inventory, or use 
 ├── installation    <---- Hadoop+Spark cluster installation home (on AWS or local)
 │   ├── ansible     <---- Ansible playbook directory
 │   │   ├── aws
-│   │   │   ├── creation             <---- Module to create AWS environment
+│   │   │   ├── creation             <---- Module to create AWS environment (optional: to create an AWS environment)
 │   │   │   ├── operations
 │   │   │   ├── conductor.sh
 │   │   │   └── player.sh
@@ -54,6 +61,17 @@ Ansible playbooks and inventories. To install in AWS, use aws inventory, or use 
 └── run.sh        <---- Run setups
 ```
 
+#### Inventory
+Ansible manages a group of nodes in an environment in a unit called [Inventory](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html). For each environment, an inventory directory is defined in the directory. 
+```
+installation/conf/ansible/inventories/
+```
+
+For instance, to manage a local PC environment named 'local', create the directory **local** and set **local** to the TARGET_INVENTORY environment variable.
+```
+installation/conf/ansible/inventories/local
+```
+
 #### Module and structure
 
 Module is a set of playbooks to execute a specific task e.g. 30_spark is to setup a Spark cluster. Each module directory has the same structure having plays and scripts.
@@ -71,15 +89,71 @@ Module is a set of playbooks to execute a specific task e.g. 30_spark is to setu
 └── scripts
     └── main.sh       <---- script to run the module (each module can run separately/repeatedly)
 ```
+
+
+### Configurations
+
+Parameters for a TARGET_INVENTORY is isolated in group_vars for the inventory.
+```
+.
+├── conf    <----- CONF_DIR environment variable
+│   └── ansible
+│      ├── ansible.cfg
+│      └── inventories
+│           └── aws
+│               ├── group_vars
+│               │   ├── all             <---- Configure properties in the 'all' group vars
+│               │   │   ├── env.yml     <---- Enviornment parameters e.g. ENV_ID to identify and to tag configuration items
+│               │   │   ├── server.yml  <---- Server parameters
+│               │   │   ├── aws.yml     <---- e.g. AMI image id, volume type, etc
+│               │   │   ├── spark.yml   <---- Spark configurations
+│               │   │   └── datadog.yml
+│               │   ├── masters         <---- For master group specifics
+│               │   └── workers
+│               └── inventory
+│                   ├── ec2.ini
+│                   ├── ec2.py
+│                   └── hosts           <---- Target node(s) using tag values (set upon creating AWS env)
+```
+
+#### Hadoop 
+
+Update the installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/21.hadoop.yml for:
+
+* HADOOP_VERSION
+* HADOOP_PACKAGE_CHECKSUM
+
+```
+installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/21.hadoop.yml
+```
+
+#### SPARK
+Update the installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/31.spark.yml for:
+<pre>
+SPARK_VERSION
+SPARK_PACKAGE_CHECKSUM
+SPARK_SCALA_VERSION     <---- Scala versoin used to compile the Spark package
+SPARK_MASTER            <---- Spark master e.g. local, yarn, etc.
+SPARK_DEPLOY_MODE       <---- Spark deployment mode e.g. cluster or client.
+SPARK_DRIVER_MEMORY     <---- Default Spark driver memory.
+</pre>
+
+#### SPARK_ADMIN and HADOOP_USERS
+Set an account name to SPARK_ADMIN in server.yml. The account is created by a playbook via HADOOP_USERS in server.yml. Set an encrypted password in the corresponding field. Use [mkpasswd as explained in Ansible document](http://docs.ansible.com/ansible/latest/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module).
+
+
+#### Datadog (optional & AWS only)
+
+Create a Datadog trial account and set the environment variable DATADOG_API_KEY to the [Datadog account API_KEY](https://app.datadoghq.com/account/settings#api). The Datadog module setups the monitors/metrics to verify that Spark is up and running, and can start monitoring and setup alerts right away.
+Update installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/51.datadog.yml for other parameters.
+
+
 ---
-
-# Prerequisite
-
-Python and Pip. Some Python packages would require installations using the Linux distribution package manager.
+# Preparations
 
 # AWS
 
-To create an AWS environment to deploy Hadoop + Spark.
+This section is optional. Only when you needs to create an AWS environment to deploy Hadoop + Spark.
 
 ## Ansible master
 
@@ -125,8 +199,25 @@ installation/setup_aws.sh
 # Hadoop/YARN & Spark
 
 ## Ansible master
+
+### Ansible
+Install the latest Ansible and Boto (botocore + boto3) with pip (--user). If the host is RHEL/CentOS/Ubuntu, run below will setup Ansible.
+
+```
+(cd ./installation/ansible/cluster/01_prerequisite/scripts && ./setup.sh)
+```
+
 ### Environment variables
 
+#### TARGET_INVENTORY
+Update TARGET_INVENTORY with the inventory name with the Ansible inventory name.
+
+#### REMOTE_USER
+Update REMOTE_USER with the Linux account name to SSH login into the Ansible targets who can sudo without password as the Ansible remote_user to run the playbooks. 
+
+Ansible master needs to SSH login to the target nodes with the user without providing a password (use public key authentication and ssh-agent), and have the permission to sudo without providing an password (configure /etc/sudoers for the user).
+
+#### Spark/Hadoop
 Update hadoop_variables.sh and spark_variables.sh for the TARGET_INVENTORY. 
 
 ```
@@ -138,73 +229,17 @@ SPARK_MASTER_HOSTNAME
 SPARK_MASTER_IP
 ```
 
+```dtd
+installation/conf/ansible/inventories/${TARGET_INVENTORY}/env/hadoop/env/hadoop_variables.sh
+installation/conf/ansible/inventories/${TARGET_INVENTORY}/env/spark/env/spark_variables.sh
+```
+
 The ./installation/_setup_env_cluster.sh exports the variables as environment variables.
 
 ```
 export $(cat ${DIR}/conf/ansible/inventories/${TARGET_INVENTORY}/env/hadoop/env/hadoop_variables.sh | grep -v '^#' | xargs)
 export $(cat ${DIR}/conf/ansible/inventories/${TARGET_INVENTORY}/env/spark/env/spark_variables.sh   | grep -v '^#' | xargs)
 ```
-
-#### REMOTE_USER
-Update REMOTE_USER with the Linux account name to SSH login into the Ansible targets who can sudo without password as the Ansible remote_user to run the playbooks.
-
-#### TARGET_INVENTORY
-Update TARGET_INVENTORY with the inventory name with the Ansible inventory name.
-
-### Configuration parameter files
-
-Parameters for a TARGET_INVENTORY is isolated in group_vars for the inventory.
-```
-.
-├── conf    <----- CONF_DIR environment variable
-│   └── ansible
-│      ├── ansible.cfg
-│      └── inventories
-│           └── aws
-│               ├── group_vars
-│               │   ├── all             <---- Configure properties in the 'all' group vars
-│               │   │   ├── env.yml     <---- Enviornment parameters e.g. ENV_ID to identify and to tag configuration items
-│               │   │   ├── server.yml  <---- Server parameters
-│               │   │   ├── aws.yml     <---- e.g. AMI image id, volume type, etc
-│               │   │   ├── spark.yml   <---- Spark configurations
-│               │   │   └── datadog.yml
-│               │   ├── masters         <---- For master group specifics
-│               │   └── workers
-│               └── inventory
-│                   ├── ec2.ini
-│                   ├── ec2.py
-│                   └── hosts           <---- Target node(s) using tag values (set upon creating AWS env)
-├── tools   <----- TOOL_DIR environment variable 
-```
-#### Hadoop 
-
-Update the installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/21.hadoop.yml for:
-
-* HADOOP_VERSION
-* HADOOP_PACKAGE_CHECKSUM
-
-```
-installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/21.hadoop.yml
-```
-
-#### SPARK
-Update the installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/31.spark.yml for:
-
-* SPARK_VERSION
-* SPARK_PACKAGE_CHECKSUM
-* SPARK_SCALA_VERSION     <---- Scala versoin used to compile the Spark package
-* SPARK_MASTER            <---- Spark master e.g. local, yarn, etc.
-* SPARK_DEPLOY_MODE       <---- Spark deployment mode e.g. cluster or client.
-* SPARK_DRIVER_MEMORY     <---- Default Spark driver memory.
-
-#### Datadog (optional & AWS only)
-
-Create a Datadog trial account and set the environment variable DATADOG_API_KEY to the [Datadog account API_KEY](https://app.datadoghq.com/account/settings#api). The Datadog module setups the monitors/metrics to verify that Spark is up and running, and can start monitoring and setup alerts right away.
-Update installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/51.datadog.yml for other parameters.
-
-#### SPARK_ADMIN and HADOOP_USERS
-Set an account name to SPARK_ADMIN in server.yml. The account is created by a playbook via HADOOP_USERS in server.yml. Set an encrypted password in the corresponding field. Use [mkpasswd as explained in Ansible document](http://docs.ansible.com/ansible/latest/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module).
-
 
 # Execution
 Make sure the environment variables are set.
