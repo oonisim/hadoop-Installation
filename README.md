@@ -1,7 +1,7 @@
 Spark/Hadoop YARN cluster deployment using Ansible
 =========
 
-# Objective
+## Objective
 Setup Spark/Hadoop YARN cluster with Ansible in an environment (either AWS, on-premise, or local PC).
 
 ### Approach
@@ -17,7 +17,7 @@ Ansible requires Python and pip both Ansible master and target nodes. Some Pytho
 
 Topology
 ------------
-Simple 1 master + 2 workers (can be increased by a parameter) in a VPC subnet, to be created by the Ansible playbooks. The number of worker nodes can be configured.
+Simple 1 master + 2 workers (can be increased by a parameter) in a subnet, to be created by the Ansible playbooks. The number of worker nodes can be configured.
 
 <img src="https://github.com/oonisim/Apache-Spark-Installation/blob/master/Images/AWS.png">
 
@@ -100,20 +100,20 @@ Parameters for a TARGET_INVENTORY is isolated in group_vars for the inventory.
 │   └── ansible
 │      ├── ansible.cfg
 │      └── inventories
-│           └── aws
+│           └── aws                     <---- For an AWS environment
 │               ├── group_vars
 │               │   ├── all             <---- Configure properties in the 'all' group vars
 │               │   │   ├── env.yml     <---- Enviornment parameters e.g. ENV_ID to identify and to tag configuration items
 │               │   │   ├── server.yml  <---- Server parameters
-│               │   │   ├── aws.yml     <---- e.g. AMI image id, volume type, etc
+│               │   │   ├── aws.yml     <---- e.g. AMI image id, volume type, etc (AWS only)
 │               │   │   ├── spark.yml   <---- Spark configurations
-│               │   │   └── datadog.yml
+│               │   │   └── datadog.yml <---- Optional for Datadog (AWS only)
 │               │   ├── masters         <---- For master group specifics
 │               │   └── workers
 │               └── inventory
-│                   ├── ec2.ini
-│                   ├── ec2.py
-│                   └── hosts           <---- Target node(s) using tag values (set upon creating AWS env)
+│                   ├── ec2.ini         <---- Ansible dynamic inventory configurations (AWS only)
+│                   ├── ec2.py          <---- Ansible dynamic inventory script (AWS only)
+│                   └── hosts           <---- Target node(s) using tag values (For AWS, auto-configured upon creating AWS environment)
 ```
 
 #### Hadoop 
