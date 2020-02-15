@@ -17,7 +17,7 @@ Ansible requires Python and pip both Ansible master and target nodes. Some Pytho
 
 Topology
 ------------
-Simple 1 master + 2 workers (can be increased by a parameter) in a subnet, to be created by the Ansible playbooks. The number of worker nodes can be configured.
+Simple 1 master + N workers (N can be increased by a parameter) in a subnet. Master redundancy is not implemented. AWS environment can be created by the Ansible playbooks.
 
 <img src="documentation/Images/AWS.png">
 
