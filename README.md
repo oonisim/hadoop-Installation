@@ -19,7 +19,6 @@ Topology
 ------------
 Simple 1 master + 2 workers (can be increased by a parameter) in a subnet, to be created by the Ansible playbooks. The number of worker nodes can be configured.
 
-<img src="https://github.com/oonisim/Apache-Spark-Installation/blob/master/Images/AWS.png">
 <img src="documentation/Images/AWS.png">
 
 Repository Structure
