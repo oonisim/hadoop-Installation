@@ -17,3 +17,7 @@
 # Take too long
 #- name: Verify SBT
 #  command: "sbt about"
+
+- name: "Install scala {{SPARK_SCALA_VERSION}}"
+  apt:
+    deb: "https://downloads.lightbend.com/scala/{{ SPARK_SCALA_VERSION }}/scala-{{ SPARK_SCALA_VERSION }}.deb"

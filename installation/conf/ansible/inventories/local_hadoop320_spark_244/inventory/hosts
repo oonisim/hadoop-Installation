@@ -1,0 +1,8 @@
+[masters]
+localhost
+
+# Entire nodes
+[environment]
+
+[environment:children]
+masters

@@ -51,15 +51,31 @@
     - "{{ HADOOP_USERS }}"
     - ssh_authorized_keys
 
+# --------------------------------------------------------------------------------
+# When content is copied, the EOL at the last line is omitted from the source
+# file causing Load key "/home/hadoop/.ssh/id_rsa": invalid format.
+# Hence need to use src instead of content. It used to be working but broke.
+# --------------------------------------------------------------------------------
+# - name: Copy ssh private key for administration users...
+#   copy:
+#     content: "{{ lookup('file', item['ssh_private_key']) }}"
+#     dest:   "~{{ item.name }}/.ssh/{{ item.ssh_private_key | basename }}"
+#     owner:  "{{ item.name }}"
+#     group:  "{{ item.group }}"
+#     mode:    "0600"
+#   with_items:
+#     - "{{ HADOOP_USERS }}"
+# --------------------------------------------------------------------------------
 - name: Copy ssh private key for administration users...
   copy:
-    content: "{{ lookup('file', item['ssh_private_key']) }}"
+    src:    "~/.ssh/id_rsa"
     dest:   "~{{ item.name }}/.ssh/{{ item.ssh_private_key | basename }}"
     owner:  "{{ item.name }}"
     group:  "{{ item.group }}"
     mode:    "0600"
   with_items:
     - "{{ HADOOP_USERS }}"
+# --------------------------------------------------------------------------------
 
 
 #- name: Copy private keys...

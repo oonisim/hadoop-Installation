@@ -42,11 +42,11 @@
   when: isUbuntu.rc == 0
 
 - name: Ubuntu apt-get update...
-  raw: apt-get -qy update
+  raw: apt -qy update
   when: isUbuntu.rc == 0
 
 - name: Ubuntu install Python packages...
-  raw: apt-get install -qy {{ item }} --reinstall
+  raw: apt install -qy {{ item }} --reinstall
   with_items: "{{ python_packages }}"
   when: isUbuntu.rc == 0
 #      when: isUbuntu.rc == 0 and isPython.rc != 0
@@ -95,9 +95,9 @@
   when: isRedHat.rc == 0
 
 #--------------------------------------------------------------------------------
-# action: setup will gather facts after python2 has been installed
+# action: setup will gather facts after python has been installed
 #--------------------------------------------------------------------------------
 - action: setup
 
 - pip:
-    name: boto
+    name: boto3

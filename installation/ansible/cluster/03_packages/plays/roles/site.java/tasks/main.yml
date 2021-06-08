@@ -6,5 +6,5 @@
 #    java_version: 8
 
 # http://openjdk.java.net/install/
+- include_tasks: "{{ ansible_distribution }}_{{ ansible_distribution_major_version}}.yml"
 - include_vars: "{{ ansible_distribution }}_{{ ansible_distribution_major_version}}.yml"
-- include     : "{{ ansible_distribution }}_{{ ansible_distribution_major_version}}.yml"

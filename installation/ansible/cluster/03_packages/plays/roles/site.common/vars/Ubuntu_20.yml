@@ -1,0 +1,13 @@
+packages:
+  - jq
+  - telnet
+  - wget
+  - curl
+  - htop
+  - atop
+  - libcgroup-dev
+  - nethogs
+  - iftop
+  - dnsutils
+#  - sbt
+#  - scala
