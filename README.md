@@ -151,6 +151,86 @@ Update installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/
 ---
 # Preparations
 
+# Local
+
+## Ansible targets
+
+### SSH
+#### SSH Server
+Run a SSH server and let it accept the public key authentication. May better to disable password authentication once key setup is done.
+
+### Ansible account
+Make sure to have an account to run ansible playbooks on the targets. Run the script on the targets which also looks after the authorized_key part. It will ask for SSH public key to be able to login as the ansible account. Prepare it in advance.
+
+```
+./installation/ansible/cluster/01_prerequisite/scripts/setup_ansible_user.sh
+```
+
+#### pip
+pip needs to be available for the ansible account to use Ansible pip module.
+
+**Tried to use ansible user local pip but did not work. Hence using system pip.**
+
+For instance, to install pip3 on Ubuntu.
+```
+apt install -fqy python3-pip
+```
+
+<br/>
+
+
+## Ansible master
+### MacOS
+To be able to use [realpath](https://stackoverflow.com/questions/3572030/bash-script-absolute-path-with-osx).
+```
+brew install coreutils
+```
+
+### Python
+Ansible itself relies on Python. Use Python 3 as Python 2 is end of support.
+
+### pip
+
+Install Ansible relies on pip. See [PyPA pip installation](https://pip.pypa.io/en/stable/installing/).
+pip installation is looked after in the 01_prerequisite module setup.sh via get-pip.py.
+```
+./installation/ansible/cluster/01_prerequisite/scripts/setup.sh
+```
+
+### Ansible
+Install the latest Ansible with pip. If the host is RHEL/CentOS/Ubuntu, run below will setup Ansible.
+
+```
+(cd ./installation/ansible/cluster/01_prerequisite/scripts && ./setup.sh)
+```
+
+#### Vault password
+Set the password to decrypt Ansible valut in the file.
+```
+~/.ansible/.vault_pass.txt
+```
+
+#### Auto-login to Ansible targets
+
+```
+ssh-copy-id -i ${SSH_PRIVATE_KEY_PATH} ${REMOTE_USER}@${REMOTE_HOST}
+```
+
+This will setup ~/.ssh/authorized_keys in the target servers so that the ansible master to be able to ssh into.
+
+
+### SSH
+
+#### Silent
+Configure ssh-agent and/or .ssh/config with the SSH key to be able to SSH into the targets without providing pass phrase.
+
+```
+eval $(ssh-agent)
+ssh-add <SSH key>
+ssh ${REMOTE_USER}@<server> sudo ls  # no prompt for asking password
+```
+
+
 # AWS
 
 This section is optional. Only when you needs to create an AWS environment to deploy Hadoop + Spark.
@@ -200,13 +280,6 @@ installation/setup_aws.sh
 
 ## Ansible master
 
-### Ansible
-Install the latest Ansible and Boto (botocore + boto3) with pip (--user). If the host is RHEL/CentOS/Ubuntu, run below will setup Ansible.
-
-```
-(cd ./installation/ansible/cluster/01_prerequisite/scripts && ./setup.sh)
-```
-
 ### Environment variables
 
 #### TARGET_INVENTORY
@@ -229,7 +302,7 @@ SPARK_MASTER_HOSTNAME
 SPARK_MASTER_IP
 ```
 
-```dtd
+```
 installation/conf/ansible/inventories/${TARGET_INVENTORY}/env/hadoop/env/hadoop_variables.sh
 installation/conf/ansible/inventories/${TARGET_INVENTORY}/env/spark/env/spark_variables.sh
 ```
@@ -267,6 +340,13 @@ Run ./installation/run_cluster.sh. If DATADOG_API_KEY is not set, the 51_datadog
 
 Alternatively, run each module one by one, and skip 51_datadog if not using.
 ```
+export HADOOP_WORKERS="<worker hosts>"
+HADOOP_NN_HOSTNAME="<name node host>"
+YARN_RM_HOSTNAME="<yarn resource manager host>"
+SPARK_WORKERS="<spark worker hosts>"
+SPARK_MASTER_HOSTNAME="<spark master host>"
+SPARK_MASTER_IP="<spark master IP to be set in /etc/hosts file>"  # Not required for local deployment
+
 pushd ansible/Spark/<module>/scripts && ./main.sh or
 ansible/Spark/<module>/scripts/main.sh aws <ansible remote_user>
 ```
