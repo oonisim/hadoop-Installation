@@ -5,5 +5,5 @@
   become_user: root
   become_method: sudo
   roles:
-    #- pi
-    - search
+    - pi
+    #- search
