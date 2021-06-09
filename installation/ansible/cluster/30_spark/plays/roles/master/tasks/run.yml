@@ -9,7 +9,8 @@
     HADOOP_HOME: "{{ HADOOP_HOME }}"
   ignore_errors: true
 
-- name: "Start cluster"
+- name: "Start cluster when cluster mode is standalone or local"
+  when: SPARK_MASTER != "yarn"
   become: true
   become_user: "{{ SPARK_ADMIN }}"
   shell: |

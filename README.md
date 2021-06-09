@@ -4,6 +4,8 @@ Spark/Hadoop YARN cluster deployment using Ansible
 ## Objective
 Setup Spark/Hadoop YARN cluster with Ansible in an environment (either AWS, on-premise, or local PC).
 
+* [](https://spark.apache.org/docs/latest/cluster-overview.html)
+
 ### Approach
 * Dependency should be injected  
 Use environment variables to specify the runtime nodes e.g. master node host. 
@@ -20,6 +22,7 @@ Topology
 Simple 1 master + N workers (N can be increased by a parameter) in a subnet. Master redundancy is not implemented. AWS environment can be created by the Ansible playbooks.
 
 <img src="documentation/Images/AWS.png">
+
 
 Repository Structure
 ------------
@@ -428,15 +431,20 @@ e.g. mapreduce-site.xml
 
 ```
 
-## Spark
+## Spark on YARN
 
 ### Spark master
-Spark master is specified installation/ansible/cluster/30_spark/plays/roles/common/templates/conf/spark-defaults.conf.
+Spark master is specified as "yarn" in the installation/ansible/cluster/30_spark/plays/roles/common/templates/conf/spark-defaults.conf.
 
+When using a resource manager such as YARN, no need to start a Spark cluster as the spark jobs are to be started by YARN.
 
 ###  Hadoop configuration files
 
-Hadoop configuration files are required as in [Launching Spark on YARN](https://spark.apache.org/docs/latest/running-on-yarn.html#launching-spark-on-yarn) for Spark to access Hadoop/Yarn. 
+To communicate with the YARN Resource Manager, Spark needs to be aware of your Hadoop configuration. This is done via the ```HADOOP_CONF_DIR``` environment variable. 
+
+* [Launching Spark on YARN](https://spark.apache.org/docs/latest/running-on-yarn.html#launching-spark-on-yarn) for Spark to access Hadoop/Yarn. 
+* [Install, Configure, and Run Spark on Top of a Hadoop YARN Cluster
+ October 7, 2020](https://www.linode.com/docs/guides/install-configure-run-spark-on-top-of-hadoop-yarn-cluster/)
 
 See Spark Documentation - [Spark Configuration](https://spark.apache.org/docs/latest/configuration.html#inheriting-hadoop-cluster-configuration).
 >To read and write from HDFS using Spark, there are two Hadoop configuration files that should be included on Spark’s classpath:
@@ -472,3 +480,48 @@ See:
 installation/ansible/cluster/30_spark/plays/roles/common/templates/profile.d
 ```
 
+---
+
+# Validation
+
+## Confirm YARN resource manager
+
+Access the YARN resource manager web UI at ```http://${HADOOP_NN_HOSTNAME}:8088```.
+
+For the YARN ports, see [YARN service ports](https://docs.cloudera.com/HDPDocuments/HDP3/HDP-3.1.0/administration/content/yarn-ports.html)
+
+<img src="documentation/Images/YarnRMWebUIi.png" align="left">
+
+
+
+
+## Test Spark on YARN
+
+* [Running Spark on YARN](https://spark.apache.org/docs/latest/running-on-yarn.html)
+* [How to Submit a Spark Application to the YARN Cluster](https://www.linode.com/docs/guides/install-configure-run-spark-on-top-of-hadoop-yarn-cluster/#how-to-submit-a-spark-application-to-the-yarn-cluster)
+
+1. Verify the sample jar file location.
+    ```
+    $ ls $SPARK_HOME/examples/jars/spark-example*
+    /opt/spark/spark-3.1.2/examples/jars/spark-examples_2.12-3.1.2.jar
+    ```
+2. Login using the **spark account**. <br>
+   Submitting job from non-spark account needs additional configurations.
+3. Submit the Spark sample Pi job.
+    ```
+    spark-submit \
+      --deploy-mode client\
+      --class org.apache.spark.examples.SparkPi \
+    $SPARK_HOME/examples/jars/spark-examples_2.12-3.1.2.jar
+    ---
+    2021-06-09 11:24:29,947 INFO spark.SparkContext: Submitted application: Spark Pi
+    ...
+    2021-06-09 11:24:31,960 INFO client.RMProxy: Connecting to ResourceManager at ubuntu/127.0.1.1:8032
+    2021-06-09 11:24:32,425 INFO yarn.Client: Requesting a new application from cluster with 1 NodeManagers
+    ...
+    2021-06-09 11:25:00,070 INFO scheduler.DAGScheduler: Job 0 finished: reduce at SparkPi.scala:38, took 3.046355 s
+    Pi is roughly 3.1426957134785676
+    ```
+
+## Monitor Spark Applications
+Spark Driver automatically starts a web UI on port 4040 upon the job submission that displays information about the application. However, when execution is finished, the Web UI is dismissed with the application driver and can no longer be accessed. Spark provides a History Server that collects application logs from HDFS and displays them in a persistent web UI. The following steps will enable log persistence in HDFS.
