@@ -22,11 +22,3 @@
   environment: 
     JAVA_HOME: "{{ java_home.stdout }}"    
 
-- name: "Create the spark history server log directory in HDFS"
-  become: true
-  become_user: "{{ HADOOP_ADMIN }}"
-  shell: |
-    {{ HADOOP_HOME }}/bin/hdfs dfs -mkdir -p {{ SPARK_LOG_DIR }}
-  run_once: yes
-  environment:
-    JAVA_HOME: "{{ java_home.stdout }}"

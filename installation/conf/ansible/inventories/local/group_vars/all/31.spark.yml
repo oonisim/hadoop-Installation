@@ -25,7 +25,7 @@ SPARK_DOWNLOAD_URL: "http://apache.mirror.amaze.com.au/spark/spark-{{ SPARK_VERS
 SPARK_DOWNLOAD_DIR: "~{{ SPARK_ADMIN }}/downloads"
 SPARK_HOME: "/opt/spark/spark-{{ SPARK_VERSION }}"
 
-SPARK_EXAMPLE_JAR: "spark-examples_{{ SPARK_SCALA_VERSION }}-{{ SPARK_VERSION }}.jar"
+SPARK_EXAMPLE_JAR: "spark-examples_{{ SPARK_SCALA_VERSION | regex_replace('^([1-9]).([1-9]+).([1-9]+)$', '\\1.\\2') }}-{{ SPARK_VERSION }}.jar"
 
 #--------------------------------------------------------------------------------
 # Nodes

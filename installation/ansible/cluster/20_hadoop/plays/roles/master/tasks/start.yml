@@ -45,5 +45,3 @@
   environment:
     JAVA_HOME: "{{ java_home.stdout }}"
     HADOOP_HOME: "{{ HADOOP_HOME }}"
-
-

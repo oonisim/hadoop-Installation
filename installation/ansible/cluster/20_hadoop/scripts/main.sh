@@ -10,6 +10,7 @@ DIR=$(realpath $(dirname $0))
 #--------------------------------------------------------------------------------
 export HADOOP_NN_HOSTNAME=${HADOOP_NN_HOSTNAME:?"Set HADOOP_NN_HOSTNAME"}
 export YARN_RM_HOSTNAME=${YARN_RM_HOSTNAME:?"Set YARN_RM_HOSTNAME"}
+export HADOOP_WORKERS=${HADOOP_WORKERS:?"Set HADOOP_WORKERS"}
 
 #--------------------------------------------------------------------------------
 # PLAYBOOK_DIR: ../plays as convention

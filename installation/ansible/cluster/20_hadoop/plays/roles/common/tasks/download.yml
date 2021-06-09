@@ -15,7 +15,6 @@
     - "{{ HADOOP_CORE_TMP_DIR }}"
     - "{{ HADOOP_DFS_DATA_DIR }}"
 
-
 - name: "Download {{ HADOOP_DOWNLOAD_URL }}"
   get_url:
     url:      "{{ HADOOP_DOWNLOAD_URL }}"
@@ -24,3 +23,14 @@
     owner:    "{{ HADOOP_ADMIN }}"
     group:    "{{ HADOOP_GROUP }}"
     mode:     0770
+
+- name: "Get sha of {{ HADOOP_DOWNLOAD_DIR }}/{{ HADOOP_PACKAGE }}"
+  stat:
+    path: "{{ HADOOP_DOWNLOAD_DIR }}/{{ HADOOP_PACKAGE }}"
+    checksum_algorithm: sha512
+    get_checksum: yes
+  register: hadoop_package_sha
+
+- name: "SHA512 of the hadoop package"
+  debug:
+    var: hadoop_package_sha.stat.checksum

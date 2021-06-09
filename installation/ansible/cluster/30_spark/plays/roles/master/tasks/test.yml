@@ -2,6 +2,10 @@
 # Run samples
 # For Spark/Yarn, HADOOP_CONF_DIR with configurations are required.
 #--------------------------------------------------------------------------------
+- name: "{{ SPARK_EXAMPLE_JAR }}"
+  debug:
+    msg: "Jar file is {{ SPARK_EXAMPLE_JAR }}"
+
 - name: "Run Pi"
   become: true
   become_user: "{{ SPARK_ADMIN }}"
