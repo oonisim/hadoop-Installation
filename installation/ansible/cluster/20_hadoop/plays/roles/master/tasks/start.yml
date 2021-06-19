@@ -7,11 +7,15 @@
     JAVA_HOME: "{{ java_home.stdout }}"
     HADOOP_HOME: "{{ HADOOP_HOME }}"
 
+# Starting YARN from within ansible with "shell" seems to fail.
+# It was working before with ansible 2.9.x, but may start fail with 2.11.x.
+# The workaround is using nohup.
+# https://stackoverflow.com/questions/66295332
 - name: "Start YARN"
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: |
-    {{ HADOOP_HOME }}/sbin/start-yarn.sh
+    nohup {{ HADOOP_HOME }}/sbin/start-yarn.sh &
   environment: 
     JAVA_HOME: "{{ java_home.stdout }}"
     HADOOP_HOME: "{{ HADOOP_HOME }}"
@@ -22,7 +26,7 @@
   register: _result
   until: _result.rc == 0
   retries: 5
-  delay: 10
+  delay: 30
   ignore_errors: true
 
 - name: "Verify HDFS"
@@ -45,3 +49,11 @@
   environment:
     JAVA_HOME: "{{ java_home.stdout }}"
     HADOOP_HOME: "{{ HADOOP_HOME }}"
+
+#- name: "Pause for 2 minutes to wait YARN to startup."
+#  pause:
+#    minutes: 1
+
+- name: check if YARN is running
+  command: curl -sf http://{{ HADOOP_RM_HOSTNAME }}:{{ HADOOP_RM_PORT }}
+

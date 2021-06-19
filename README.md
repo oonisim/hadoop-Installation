@@ -528,9 +528,18 @@ For the YARN ports, see [YARN service ports](https://docs.cloudera.com/HDPDocume
 <img src="documentation/Images/YarnRMWebUIi.png" align="left">
 
 
+## Test Hadoop/YARN
 
+Instead of "hadoop" command, use "yarn" command to run sample programs.
+```
+export HADOOP_WORKERS=ubuntu
+export HADOOP_NN_HOSTNAME=ubuntu
+export YARN_RM_HOSTNAME=ubuntu
 
-## Test Spark on YARN
+yarn jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.2.jar pi 16 100
+```
+
+## Test Spark/YARN
 
 * [Running Spark on YARN](https://spark.apache.org/docs/latest/running-on-yarn.html)
 * [How to Submit a Spark Application to the YARN Cluster](https://www.linode.com/docs/guides/install-configure-run-spark-on-top-of-hadoop-yarn-cluster/#how-to-submit-a-spark-application-to-the-yarn-cluster)

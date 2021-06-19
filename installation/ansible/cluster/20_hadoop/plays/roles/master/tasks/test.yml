@@ -2,11 +2,11 @@
   debug:
     msg: "Expected: [Estimated value of Pi is 3.15000000000000000000]"
 
-- name: "Run Pi"
+- name: "Run Pi via YARN (use $HADOOP_HOME/bin/yarn instead of hadoop)"
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: |
-    hadoop jar {{ HADOOP_HOME }}/share/hadoop/mapreduce/hadoop-mapreduce-examples-{{ HADOOP_VERSION }}.jar pi 16 100
+    yarn jar {{ HADOOP_HOME }}/share/hadoop/mapreduce/hadoop-mapreduce-examples-{{ HADOOP_VERSION }}.jar pi 16 100
   environment:
     PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"    
