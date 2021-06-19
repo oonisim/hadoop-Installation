@@ -4,7 +4,7 @@ Spark/Hadoop YARN cluster deployment using Ansible
 ## Objective
 Setup Spark/Hadoop YARN cluster with Ansible in an environment (either AWS, on-premise, or local PC).
 
-* [](https://spark.apache.org/docs/latest/cluster-overview.html)
+* [Cluster Mode Overview](https://spark.apache.org/docs/latest/cluster-overview.html)
 
 ### Approach
 * Dependency should be injected  
@@ -34,30 +34,43 @@ Ansible playbooks and inventories. To install in AWS, use aws inventory, or use 
 ```
 .
 ├── installation    <---- Hadoop+Spark cluster installation home (on AWS or local)
-│   ├── ansible     <---- Ansible playbook directory
-│   │   ├── aws
-│   │   │   ├── creation             <---- Module to create AWS environment (optional: to create an AWS environment)
-│   │   │   ├── operations
-│   │   │   ├── conductor.sh
-│   │   │   └── player.sh
-│   │   └── cluster
-│   │       ├── 01_prerequisite      <---- Module to setup Ansible pre-requisites
-│   │       ├── 02_os                <---- Module to setup OS to install Spark
-│   │       ├── 02_packages          <---- Module to setup software packages
-│   │       ├── 20_hadoop            <---- Module to setup Hadoop/YARN cluster
-│   │       ├── 30_spark             <---- Module to setup Spark cluster
-│   │       ├── 40_spark             <---- Module to run Spark applications (naive bayes, etc)
-│   │       ├── 510datadog           <---- Module to setup datadog monitoring (option)
-│   │       ├── conductor.sh         <---- Script to conduct playbook executions
-│   │       └── player.sh            <---- Playbook player (to be used to decrypt Ansible vault key)
-│   ├── conf
-│   │   └── ansible          <---- Ansible configuration directory
-│   │       ├── ansible.cfg  <---- Configurations for all plays
-│   │       └── inventories  <---- Each environment has it inventory here
-│   │           ├── aws      <---- AWS environment inventory
-│   │           ├── local    <---- local environment inventory
-│   │           └── template
-│   └── tools
+│   ├── ansible     <---- Ansible playbook directory
+│   │   ├── aws
+│   │   │   ├── creation             <---- Module to create AWS environment (optional: to create an AWS environment)
+│   │   │   ├── operations
+│   │   │   ├── conductor.sh
+│   │   │   └── player.sh
+│   │   └── cluster
+│   │       ├── 01_prerequisite      <---- Module to setup Ansible pre-requisites
+│   │       ├── 02_os                <---- Module to setup OS to install Spark
+│   │       ├── 02_packages          <---- Module to setup software packages
+│   │       ├── 20_hadoop            <---- Module to setup Hadoop/YARN cluster
+│   │       ├── 30_spark             <---- Module to setup Spark cluster
+│   │       ├── 40_spark             <---- Module to run Spark applications (naive bayes, etc)
+│   │       ├── 510datadog           <---- Module to setup datadog monitoring (option)
+│   │       ├── conductor.sh         <---- Script to conduct playbook executions
+│   │       └── player.sh            <---- Playbook player (to be used to decrypt Ansible vault key)
+│   ├── conf
+│   │   └── ansible          <---- Ansible configuration directory
+│   │       ├── ansible.cfg  <---- Configurations for all plays
+│   │       └── inventories  <---- Each environment has it inventory here
+│   │           ├── aws      <---- AWS environment inventory
+│   │           ├── local    <---- local environment inventory
+│   │           │   ├── env
+│   │           │   │   ├── hadoop
+│   │           │   │   │   ├── env
+│   │           │   │   │   │   └── hadoop_variables.sh  <--- Hadoop environment
+│   │           │   │   │   └── etc
+│   │           │   │   │       └── hadoop-env.sh
+│   │           │   │   ├── os
+│   │           │   │   │   └── env
+│   │           │   │   │       └── hosts
+│   │           │   │   └── spark
+│   │           │   │       ├── conf
+│   │           │   │       └── env
+│   │           │   │           └── spark_variables.sh   <--- Spark environment 
+│   │           └── template
+│   └── tools
 ├── master        <---- Spark master node data for run_Spark.s created by setup_aws.sh or update manally.
 ├── setup.sh      <---- Run setup_aws.sh and run_Spark.sh
 ├── setup_aws.sh  <---- Run AWS setups
@@ -82,13 +95,13 @@ Module is a set of playbooks to execute a specific task e.g. 30_spark is to setu
 30_spark/
 ├── Readme.md         <---- (option) description of the module
 ├── plays
-│   ├── roles
-│   │   ├── common    <---- Common tasks for both master and workers
-│   │   ├── master    <---- Setup master node
-│   │   └── worker    <---- Setup worker nodes
-│   ├── site.yml
-│   ├── masters.yml   <--- playbook for master node
-│   └── workers.yml   <--- playbook for worker nodes
+│   ├── roles
+│   │   ├── common    <---- Common tasks for both master and workers
+│   │   ├── master    <---- Setup master node
+│   │   └── worker    <---- Setup worker nodes
+│   ├── site.yml
+│   ├── masters.yml   <--- playbook for master node
+│   └── workers.yml   <--- playbook for worker nodes
 └── scripts
     └── main.sh       <---- script to run the module (each module can run separately/repeatedly)
 ```
@@ -96,27 +109,27 @@ Module is a set of playbooks to execute a specific task e.g. 30_spark is to setu
 
 ### Configurations
 
-Parameters for a TARGET_INVENTORY is isolated in group_vars for the inventory.
+Parameters for a TARGET_INVENTORY are isolated in group_vars for the inventory.
 ```
 .
 ├── conf    <----- CONF_DIR environment variable
-│   └── ansible
-│      ├── ansible.cfg
-│      └── inventories
-│           └── aws                     <---- For an AWS environment
-│               ├── group_vars
-│               │   ├── all             <---- Configure properties in the 'all' group vars
-│               │   │   ├── env.yml     <---- Enviornment parameters e.g. ENV_ID to identify and to tag configuration items
-│               │   │   ├── server.yml  <---- Server parameters
-│               │   │   ├── aws.yml     <---- e.g. AMI image id, volume type, etc (AWS only)
-│               │   │   ├── spark.yml   <---- Spark configurations
-│               │   │   └── datadog.yml <---- Optional for Datadog (AWS only)
-│               │   ├── masters         <---- For master group specifics
-│               │   └── workers
-│               └── inventory
-│                   ├── ec2.ini         <---- Ansible dynamic inventory configurations (AWS only)
-│                   ├── ec2.py          <---- Ansible dynamic inventory script (AWS only)
-│                   └── hosts           <---- Target node(s) using tag values (For AWS, auto-configured upon creating AWS environment)
+│   └── ansible
+│      ├── ansible.cfg
+│      └── inventories
+│           └── aws                     <---- For an AWS environment
+│               ├── group_vars
+│               │   ├── all             <---- Configure properties in the 'all' group vars
+│               │   │   ├── env.yml     <---- Enviornment parameters e.g. ENV_ID to identify and to tag configuration items
+│               │   │   ├── server.yml  <---- Server parameters
+│               │   │   ├── aws.yml     <---- e.g. AMI image id, volume type, etc (AWS only)
+│               │   │   ├── spark.yml   <---- Spark configurations
+│               │   │   └── datadog.yml <---- Optional for Datadog (AWS only)
+│               │   ├── masters         <---- For master group specifics
+│               │   └── workers
+│               └── inventory
+│                   ├── ec2.ini         <---- Ansible dynamic inventory configurations (AWS only)
+│                   ├── ec2.py          <---- Ansible dynamic inventory script (AWS only)
+│                   └── hosts           <---- Target node(s) using tag values (For AWS, auto-configured upon creating AWS environment)
 ```
 
 #### Hadoop 
@@ -155,6 +168,8 @@ Update installation/conf/ansible/inventories/${TARGET_INVENTORY}/group_vars/all/
 # Preparations
 
 # Local
+
+See [Linux Setup](https://github.com/oonisim/linux-setup) for the details.
 
 ## Ansible targets
 
@@ -215,12 +230,7 @@ Set the password to decrypt Ansible valut in the file.
 
 #### Auto-login to Ansible targets
 
-```
-ssh-copy-id -i ${SSH_PRIVATE_KEY_PATH} ${REMOTE_USER}@${REMOTE_HOST}
-```
-
-This will setup ~/.ssh/authorized_keys in the target servers so that the ansible master to be able to ssh into.
-
+Make sure to be able to login to the Ansible target hosts without passwords.
 
 ### SSH
 
@@ -293,21 +303,25 @@ Update REMOTE_USER with the Linux account name to SSH login into the Ansible tar
 
 Ansible master needs to SSH login to the target nodes with the user without providing a password (use public key authentication and ssh-agent), and have the permission to sudo without providing an password (configure /etc/sudoers for the user).
 
-#### Spark/Hadoop
-Update hadoop_variables.sh and spark_variables.sh for the TARGET_INVENTORY. 
+#### OS
+Update ```installation/conf/ansible/inventories/local/env/os/env/hosts``` to be able to resolve the host names in the cluster. Alternatively use DNS.
+```
+127.0.1.1	ubuntu   # For local installation, or all the host/ip pairs.
+```
 
+#### Spark/Hadoop
+Update ```installation/conf/ansible/inventories/${TARGET_INVENTORY}/env/hadoop/env/hadoop_variables.sh```:
 ```
 HADOOP_WORKERS
 HADOOP_NN_HOSTNAME
 YARN_RM_HOSTNAME
+```
+
+Update ```installation/conf/ansible/inventories/${TARGET_INVENTORY}/env/spark/env/spark_variables.sh```:
+```
 SPARK_WORKERS
 SPARK_MASTER_HOSTNAME
 SPARK_MASTER_IP
-```
-
-```
-installation/conf/ansible/inventories/${TARGET_INVENTORY}/env/hadoop/env/hadoop_variables.sh
-installation/conf/ansible/inventories/${TARGET_INVENTORY}/env/spark/env/spark_variables.sh
 ```
 
 The ./installation/_setup_env_cluster.sh exports the variables as environment variables.
