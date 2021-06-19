@@ -1,4 +1,17 @@
-- name: "Grant write access to /user"
+#--------------------------------------------------------------------------------
+# SPARK_ADMIN account MUST be in HADOOP_GROUP and be able to read HADOOP_CONF_DIR.
+# https://stackoverflow.com/a/36776378
+# https://stackoverflow.com/a/40905888/4281353
+# https://stackoverflow.com/a/40906741/4281353
+#--------------------------------------------------------------------------------
+- name: "Set {{ HADOOP_HOME }} permission"
+  file:
+    path: "{{ HADOOP_HOME }}"
+    group: "{{ HADOOP_GROUP }}"
+    mode: "u=rwX,g=rX"
+    recurse: yes
+
+- name: "Grant HDFS write access to /user"
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: | 

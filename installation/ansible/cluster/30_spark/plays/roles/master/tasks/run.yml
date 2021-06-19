@@ -1,3 +1,12 @@
+- name: "Verify access to {{ HADOOP_CONF_DIR }}"
+  become: true
+  become_user: "{{ SPARK_ADMIN }}"
+  shell: |
+    ls -lrt {{ HADOOP_CONF_DIR }}
+  environment:
+    HADOOP_HOME: "{{ HADOOP_HOME }}"
+  ignore_errors: false
+
 - name: "Stop cluster"
   become: true
   become_user: "{{ SPARK_ADMIN }}"

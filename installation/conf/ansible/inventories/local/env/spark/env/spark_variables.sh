@@ -3,4 +3,5 @@
 #--------------------------------------------------------------------------------
 SPARK_WORKERS='ubuntu'
 SPARK_MASTER_HOSTNAME=ubuntu
-SPARK_MASTER_IP=127.0.0.1
+SPARK_MASTER_IP=127.0.1.1
+SPARK_LOCAL_IP=127.0.1.1

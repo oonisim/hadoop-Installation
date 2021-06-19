@@ -492,7 +492,7 @@ core-site.xml, which sets the default filesystem name.
 
 The files are copied to the ${HADOOP_CONF_DIR} on the Spark nodes. See:
 
-```aidl
+```
 installation/ansible/cluster/30_spark/plays/roles/common/tasks/hadoop.yml
 ```
 
@@ -569,3 +569,39 @@ yarn jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.2.jar pi 16 100
 
 ## Monitor Spark Applications
 Spark Driver automatically starts a web UI on port 4040 upon the job submission that displays information about the application. However, when execution is finished, the Web UI is dismissed with the application driver and can no longer be accessed. Spark provides a History Server that collects application logs from HDFS and displays them in a persistent web UI. The following steps will enable log persistence in HDFS.
+
+---
+# FAQ
+
+## [Spark Shell - __spark_libs__.zip does not exist](https://stackoverflow.com/a/40906741)
+
+### Access to HADOOP_NN_HOST:8020 must be open
+
+spark-submit changes the IP address if it is the loopback. Make sure the access to the HADOOP_NN_HOST:8020 are available.
+```
+"21/06/19 04:26:05 WARN Utils: Your hostname, ubuntu resolves to a loopback address: 127.0.1.1; using 192.168.13.128 instead (on interface ens33)",
+"21/06/19 04:26:05 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address",
+```
+
+### SPARK_ADMIN account MUST be able to read HADOOP_CONF_DIR
+
+* https://stackoverflow.com/a/36776378
+* https://stackoverflow.com/a/40905888/4281353
+* https://stackoverflow.com/a/40906741/4281353
+
+Error occurred as below, causing spark-submit to fail.
+```
+Failing this attempt.Diagnostics: [2021-06-19 12:33:01.027]File file:/home/spark/.sparkStaging/application_1624130746514_0002/__spark_libs__5972575879891557799.zip does not exist
+java.io.FileNotFoundException: File file:/home/spark/.sparkStaging/application_1624130746514_0002/__spark_libs__5972575879891557799.zip does not exist
+```
+
+Cause was by removing the HADOOP_ADMIN user, the HADOOP_GROUP became invalid, and SPARK_ADMIN could not read the HADOOP_CONF_DIR.
+```
+spark@ubuntu$ ls -lrt /opt/hadoop/
+ls: cannot open directory '/opt/hadoop/': Permission denied    <--- Cannot read the directory
+
+spark@ubuntu$ ls -lrt /opt
+total 20
+drwxrwx--- 3 hadoop  1003 4096 Jun 18 20:38 hadoop             <---- Invalid group
+drwxr-xr-x 3 spark  spark 4096 Jun 19 04:24 spark
+```

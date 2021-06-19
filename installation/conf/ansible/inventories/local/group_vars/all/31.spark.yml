@@ -33,6 +33,7 @@ SPARK_EXAMPLE_JAR: "spark-examples_{{ SPARK_SCALA_VERSION | regex_replace('^([1-
 SPARK_WORKERS: "{{ lookup('env','SPARK_WORKERS') }}" 
 SPARK_MASTER_HOSTNAME: "{{ lookup('env','SPARK_MASTER_HOSTNAME') }}" 
 SPARK_MASTER_PORT: 7077
+SPARK_LOCAL_IP: "{{ lookup('env','SPARK_LOCAL_IP') }}"
 
 #--------------------------------------------------------------------------------
 # Spark logging

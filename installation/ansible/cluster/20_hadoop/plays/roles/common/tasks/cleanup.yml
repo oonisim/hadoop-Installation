@@ -14,9 +14,9 @@
     state: absent
   with_items:
     - "{{ HADOOP_DOWNLOAD_DIR }}"
-    - "{{ HADOOP_HOME }} "
     - "{{ HADOOP_CORE_TMP_DIR }}"
     - "{{ HADOOP_DFS_DATA_DIR }}"
+    - "{{ HADOOP_HOME }} "
   ignore_errors: true
 
 - name: Delete HADOOP environment variable setups
