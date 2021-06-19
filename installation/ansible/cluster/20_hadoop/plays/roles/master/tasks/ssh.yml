@@ -1,6 +1,10 @@
 #--------------------------------------------------------------------------------
 # Setup SSH connections to workers.
 # HDFS commands are via SSH, hence need to create known_hosts.
+# NOTE:
+#   If the playbook freezes, check
+#   - if SSH is asking for a password.
+#   - if SSH is waiting for "Enter passphrase for key '/home/hadoop/.ssh/id_rsa': "
 #--------------------------------------------------------------------------------
 - name: "SSH into workers"
   become: true

@@ -16,6 +16,18 @@ Use environment variables to specify the runtime nodes e.g. master node host.
 
 Ansible requires Python and pip both Ansible master and target nodes. Some Python packages would require installations using the Linux distribution package manager.
 
+Tested with Ansible:
+```
+ansible [core 2.11.1] 
+  config file = None
+  configured module search path = ['/home/oonisim/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /home/oonisim/.local/lib/python3.8/site-packages/ansible
+  ansible collection location = /home/oonisim/.ansible/collections:/usr/share/ansible/collections
+  executable location = /home/oonisim/.local/bin/ansible
+  python version = 3.8.5 (default, May 27 2021, 13:30:53) [GCC 9.3.0]
+  jinja version = 3.0.1
+  libyaml = True
+```
 
 Topology
 ------------
@@ -184,6 +196,8 @@ Make sure to have an account to run ansible playbooks on the targets. Run the sc
 ./installation/ansible/cluster/01_prerequisite/scripts/setup_ansible_user.sh
 ```
 
+SSH key files are to be copied. If passphrase is set, then need to place the way to provide the passphrase automatically.
+
 #### pip
 pip needs to be available for the ansible account to use Ansible pip module.
 
@@ -230,7 +244,11 @@ Set the password to decrypt Ansible valut in the file.
 
 #### Auto-login to Ansible targets
 
-Make sure to be able to login to the Ansible target hosts without passwords.
+Make sure that REMOTE_USER is able to login to the Ansible target hosts without passwords.
+
+```
+ssh -v -oStrictHostKeyChecking=no $(hostname) uptime
+```
 
 ### SSH
 
@@ -310,6 +328,9 @@ Update ```installation/conf/ansible/inventories/local/env/os/env/hosts``` to be 
 ```
 
 #### Spark/Hadoop
+Make sure that HADOOP_ADMIN is able to login to the hadoop worker hosts without passwords.
+Make sure that SPARK_ADMIN is able to login to the spark worker hosts without passwords.
+
 Update ```installation/conf/ansible/inventories/${TARGET_INVENTORY}/env/hadoop/env/hadoop_variables.sh```:
 ```
 HADOOP_WORKERS
