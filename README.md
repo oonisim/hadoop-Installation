@@ -604,4 +604,7 @@ spark@ubuntu$ ls -lrt /opt
 total 20
 drwxrwx--- 3 hadoop  1003 4096 Jun 18 20:38 hadoop             <---- Invalid group
 drwxr-xr-x 3 spark  spark 4096 Jun 19 04:24 spark
-```
+``` 
+
+### logout & re-login
+In case the HADOOP_ADMIN account has been recreated, relogin before running Ansible. The old account information may be in cache. 

@@ -3,13 +3,25 @@
 # https://stackoverflow.com/a/36776378
 # https://stackoverflow.com/a/40905888/4281353
 # https://stackoverflow.com/a/40906741/4281353
+#
+# Approach to use {{ lookup('env','HOME') }} with becoming {{ HADOOP_ADMIN }}
+# did not work.
 #--------------------------------------------------------------------------------
-- name: "Set {{ HADOOP_HOME }} permission"
+- name: "Set access permission to HADOOP_CONF_DIR"
   file:
-    path: "{{ HADOOP_HOME }}"
+    path: "{{ HADOOP_BASE }}"
     group: "{{ HADOOP_GROUP }}"
     mode: "u=rwX,g=rX"
     recurse: yes
+
+# This does not work.
+#- name: "Set access permission to HADOOP_CONF_DIR"
+#  become: true
+#  become_user: "{{ HADOOP_ADMIN }}"
+#  shell: |
+#    chgrp -R {{ HADOOP_GROUP }} {{ lookup('env','HOME') }}
+#    chgrp -R {{ HADOOP_GROUP }} {{ HADOOP_HOME }}
+#    chgrp -R {{ HADOOP_GROUP }} {{ HADOOP_CONF_DIR }}
 
 - name: "Grant HDFS write access to /user"
   become: true
