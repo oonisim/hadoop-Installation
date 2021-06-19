@@ -1,24 +1,40 @@
-- name: "Start HDFS"
+# https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ClusterSetup.html#Hadoop_Startup
+
+#- name: "Start HDFS"
+#  become: true
+#  become_user: "{{ HADOOP_ADMIN }}"
+#  shell: |
+#    nohup {{ HADOOP_HOME }}/sbin/start-dfs.sh &
+#  environment:
+#    JAVA_HOME: "{{ java_home.stdout }}"
+#    HADOOP_HOME: "{{ HADOOP_HOME }}"
+#
+- name: "Start DFS"
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
-  shell: |
-    {{ HADOOP_HOME }}/sbin/start-dfs.sh
-  environment: 
-    JAVA_HOME: "{{ java_home.stdout }}"
-    HADOOP_HOME: "{{ HADOOP_HOME }}"
+  command: "nohup {{ HADOOP_HOME }}/sbin/start-dfs.sh"
 
 # Starting YARN from within ansible with "shell" seems to fail.
 # It was working before with ansible 2.9.x, but may start fail with 2.11.x.
 # The workaround is using nohup.
 # https://stackoverflow.com/questions/66295332
+#- name: "Start YARN"
+#  become: true
+#  become_user: "{{ HADOOP_ADMIN }}"
+#  shell: |
+#    nohup {{ HADOOP_HOME }}/sbin/start-yarn.sh &
+#  environment: 
+#    JAVA_HOME: "{{ java_home.stdout }}"
+#    HADOOP_HOME: "{{ HADOOP_HOME }}"
+
 - name: "Start YARN"
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
-  shell: |
-    nohup {{ HADOOP_HOME }}/sbin/start-yarn.sh &
-  environment: 
-    JAVA_HOME: "{{ java_home.stdout }}"
-    HADOOP_HOME: "{{ HADOOP_HOME }}"
+  command: "nohup {{ HADOOP_HOME }}/sbin/start-yarn.sh &"
+
+- name: "Pause to wait DFS/YARN to startup."
+  pause:
+    minutes: 2
 
 - name: "Wait cluster running"
   shell: |
@@ -49,10 +65,6 @@
   environment:
     JAVA_HOME: "{{ java_home.stdout }}"
     HADOOP_HOME: "{{ HADOOP_HOME }}"
-
-#- name: "Pause for 2 minutes to wait YARN to startup."
-#  pause:
-#    minutes: 1
 
 - name: check if YARN is running
   command: curl -sf http://{{ HADOOP_RM_HOSTNAME }}:{{ HADOOP_RM_PORT }}
