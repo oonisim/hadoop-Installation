@@ -20,8 +20,8 @@ instances:
   # address or resolvable host name for the Mesos master.
   #
   # The use of `resourcemanager_uri` has been deprecated, but is still functional.
-  - spark_url: {{ SPARK_URL }}
-
+  #- spark_url: {{ SPARK_URL }}
+  - spark_url: {{ YARN_RM_URL }}
     # To enable monitoring of a Standalone Spark cluster, the spark cluster
     # mode must be set. Uncomment the cluster mode that applies.
     # spark_cluster_mode: spark_yarn_mode

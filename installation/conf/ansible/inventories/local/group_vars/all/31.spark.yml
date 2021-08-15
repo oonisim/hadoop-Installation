@@ -28,23 +28,17 @@ SPARK_HOME: "/opt/spark/spark-{{ SPARK_VERSION }}"
 SPARK_EXAMPLE_JAR: "spark-examples_{{ SPARK_SCALA_VERSION | regex_replace('^([1-9]).([1-9]+).([1-9]+)$', '\\1.\\2') }}-{{ SPARK_VERSION }}.jar"
 
 #--------------------------------------------------------------------------------
-# Nodes
+# Nodes (Spark Standalone only)
 #--------------------------------------------------------------------------------
-SPARK_WORKERS: "{{ lookup('env','SPARK_WORKERS') }}" 
-SPARK_MASTER_HOSTNAME: "{{ lookup('env','SPARK_MASTER_HOSTNAME') }}" 
+SPARK_MASTER_HOSTNAME: "{{ lookup('env','SPARK_MASTER_HOSTNAME') }}"
+SPARK_WORKERS: "{{ lookup('env','SPARK_WORKERS') }}"
 SPARK_MASTER_PORT: 7077
 SPARK_LOCAL_IP: "{{ lookup('env','SPARK_LOCAL_IP') }}"
 
 #--------------------------------------------------------------------------------
-# Spark logging
+# Deployment mode
 #--------------------------------------------------------------------------------
-SPARK_LOG_DIR: /logs_spark
-
-#--------------------------------------------------------------------------------
-# Spark UI
-#--------------------------------------------------------------------------------
-SPARK_UI_PORT: 8088
-SPARK_URL: "http://{{ SPARK_MASTER_HOSTNAME }}:{{ SPARK_UI_PORT }}"
+SPARK_DEPLOY_MODE: cluster
 
 #--------------------------------------------------------------------------------
 # Spark master
@@ -53,9 +47,17 @@ SPARK_URL: "http://{{ SPARK_MASTER_HOSTNAME }}:{{ SPARK_UI_PORT }}"
 SPARK_MASTER: "yarn"
 
 #--------------------------------------------------------------------------------
-# Deployment mode
+# Spark UI for standalone
 #--------------------------------------------------------------------------------
-SPARK_DEPLOY_MODE: cluster
+SPARK_UI_PORT: 8088
+SPARK_URL: "http://{{ SPARK_MASTER_HOSTNAME }}:{{ SPARK_UI_PORT }}"
+
+#--------------------------------------------------------------------------------
+# Spark History Server
+#--------------------------------------------------------------------------------
+SPARK_HISTORY_URL: "http://{{ SPARK_MASTER_HOSTNAME }}:{{ SPARK_HISTORY_UI_PORT }}"
+SPARK_LOG_DIR: /logs_spark
+SPARK_HISTORY_UI_PORT: 18088
 
 #--------------------------------------------------------------------------------
 # Spark properties 

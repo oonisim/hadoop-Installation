@@ -1,10 +1,12 @@
 Spark/Hadoop YARN cluster deployment using Ansible
 =========
 
+
 ## Objective
-Setup Spark/Hadoop YARN cluster with Ansible in an environment (either AWS, on-premise, or local PC).
+Setup **Spark on Hadoop/YARN cluster** with Ansible in an environment (either AWS, on-premise, or local PC).
 
 * [Cluster Mode Overview](https://spark.apache.org/docs/latest/cluster-overview.html)
+
 
 ### Approach
 * Dependency should be injected  
@@ -31,7 +33,7 @@ ansible [core 2.11.1]
 
 Topology
 ------------
-Simple 1 master + N workers (N can be increased by a parameter) in a subnet. Master redundancy is not implemented. AWS environment can be created by the Ansible playbooks.
+Simple 1 Hadoop/YARN master + N workers (N can be increased by a parameter) in a subnet. Master redundancy is not implemented. AWS environment can be created by the Ansible playbooks.
 
 <img src="documentation/Images/AWS.png">
 
@@ -516,12 +518,64 @@ installation/ansible/cluster/30_spark/plays/roles/common/templates/profile.d
 ```
 
 ---
+# Operation
 
+## Cluster
+
+NO NEED to start **Spark luster**. Only we need is **Hadoop/YARN cluster**. Spark submits the job to **Hadoop/YARN** and the YARN Resource Manager allocates the application driver and exdcutors.
+
+* [Hadoop Startup](https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/ClusterSetup.html#Hadoop_Startup)
+
+> To start a Hadoop cluster you will need to start both the HDFS and YARN cluster.
+
+
+### Managing worker nodes in the cluster
+Make sure ```etc/hadoop/workers``` and ```ssh trusted access within the cluster nodes``` is configured.
+
+### Hadoop/YARN master node
+
+Login to the Hadoop/YARN master node with the hadoop user account.
+
+
+The first time you bring up HDFS, it must be formatted. Format a new distributed filesystem as hdfs:
+```
+$HADOOP_HOME/bin/hdfs namenode -format <cluster_name>
+```
+Start all the HDFS processes (namenode, datanode) in the cluster.
+```
+$HADOOP_HOME/sbin/start-dfs.sh
+```
+
+Start all the YARN processes (resourcemanager, nodemanager) in the cluster.
+```
+$HADOOP_HOME/sbin/start-yarn.sh
+```
+
+## Spark History Server
+
+* [Monitor Your Spark Applications](https://www.linode.com/docs/guides/install-configure-run-spark-on-top-of-hadoop-yarn-cluster/#monitor-your-spark-applications)
+
+Verify $SPARK_HOME/conf/spark-defaults.conf
+```
+spark.eventLog.enabled           true
+spark.eventLog.dir               hdfs://{{ HADOOP_NN_HOSTNAME }}:{{ HADOOP_NN_PORT}}{{ SPARK_LOG_DIR }}
+spark.history.fs.logdirectory    hdfs://{{ HADOOP_NN_HOSTNAME }}:{{ HADOOP_NN_PORT}}{{ SPARK_LOG_DIR }}
+spark.history.ui.port            {{ SPARK_HISTORY_UI_PORT }}
+```
+
+Verify ```hdfs://{{ HADOOP_NN_HOSTNAME }}:{{ HADOOP_NN_PORT}}{{ SPARK_LOG_DIR }}``` exits in the HDFS.
+
+Run the History Server:
+```
+$SPARK_HOME/sbin/start-history-server.sh
+```
+
+---
 # Validation
 
 ## Confirm YARN resource manager
 
-Access the YARN resource manager web UI at ```http://${HADOOP_NN_HOSTNAME}:8088```.
+Access the YARN resource manager web UI at ```http://${HADOOP_RM_HOSTNAME}:8088```.
 
 For the YARN ports, see [YARN service ports](https://docs.cloudera.com/HDPDocuments/HDP3/HDP-3.1.0/administration/content/yarn-ports.html)
 
@@ -567,8 +621,10 @@ yarn jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.2.jar pi 16 100
     Pi is roughly 3.1426957134785676
     ```
 
-## Monitor Spark Applications
-Spark Driver automatically starts a web UI on port 4040 upon the job submission that displays information about the application. However, when execution is finished, the Web UI is dismissed with the application driver and can no longer be accessed. Spark provides a History Server that collects application logs from HDFS and displays them in a persistent web UI. The following steps will enable log persistence in HDFS.
+## Monitor Spark Applications on the Spark History Server
+Spark Driver automatically starts a web UI on port 4040 upon the job submission that displays information about the application. However, when execution is finished, the Web UI is dismissed with the application driver and can no longer be accessed. Spark provides a History Server that collects application logs from HDFS and displays them in a persistent web UI.
+
+Access the History Server at ```http://{{ SPARK_MASTER_HOSTNAME }}:{{ SPARK_HISTORY_UI_PORT }}```.
 
 ---
 # FAQ

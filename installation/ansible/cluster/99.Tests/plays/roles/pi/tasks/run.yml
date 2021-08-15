@@ -6,7 +6,7 @@
   become: true
   become_user: "{{ HADOOP_ADMIN }}"
   shell: |
-    hadoop jar {{ HADOOP_HOME }}/share/hadoop/mapreduce/hadoop-mapreduce-examples-{{ HADOOP_VERSION }}.jar pi 16 100
+    yarn jar {{ HADOOP_HOME }}/share/hadoop/mapreduce/hadoop-mapreduce-examples-{{ HADOOP_VERSION }}.jar pi 16 100
   environment:
     PATH: "{{ ansible_env.PATH }}:{{ HADOOP_HOME }}/bin:{{ SPARK_HOME }}:/bin"
     JAVA_HOME: "{{ java_home.stdout }}"    

@@ -78,9 +78,11 @@ HADOOP_DFS_DATA_DIR: "/home/{{ HADOOP_ADMIN }}/dfs/data"
 
 #--------------------------------------------------------------------------------
 # YARN configurations
+# https://hadoop.apache.org/docs/r2.7.6/hadoop-yarn/hadoop-yarn-common/yarn-default.xml
 #--------------------------------------------------------------------------------
 # yarn.resourcemanager.hostname
 YARN_RM_HOSTNAME:  "{{ lookup('env','YARN_RM_HOSTNAME') }}"
+YARN_RM_URL: "http://{{ YARN_RM_HOSTNAME }}:8088"
 # yarn.nodemanager.resource.cpu-vcores (The number of cores that a node manager can allocate to containers)
 # It should be set to the total number of cores on the machine, minus a core for each daemon process running on the machine (datanode, node manager, and any other long-running processes).
 YARN_NM_CPU_VCORES: 4
