@@ -4,6 +4,7 @@
     id: "{{ apt_key_sbt }}"
 
 - name: Add the SBT repository to source list
+  # https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html
   apt_repository:
     repo: "{{ apt_repository_sbt }}"
     state: present
