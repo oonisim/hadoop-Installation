@@ -34,15 +34,14 @@ fi
 #--------------------------------------------------------------------------------
 ./maintenance.sh
 ${DIR}/propagate_artefacts.sh
-for module in $(find ./ansible/cluster -type d -maxdepth 1 -mindepth 1 | sort)
+for module in $(find ./ansible/cluster -maxdepth 1 -mindepth 1 -type d  | sort)
 do
     ${module}/scripts/main.sh \
         ${TARGET_INVENTORY} \
         ${REMOTE_USER} 
-
 #    if [ "${module##*/}" == "02_os" ] ; then
 #        echo "waiting sever restarts"
 #        sleep 10
 #    fi
-    sleep 10
+    sleep 3
 done
